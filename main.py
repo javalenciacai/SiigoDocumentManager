@@ -257,34 +257,53 @@ def logout():
     st.session_state.current_batch = None
 
 def process_entries(df):
+    """Process journal entries from DataFrame"""
     results = []
     processor = ExcelProcessor(None)
+    
+    # Convert date column to datetime if it's not already
+    try:
+        df['date'] = pd.to_datetime(df['date'])
+    except Exception as e:
+        error_logger.log_error(
+            'processing_errors',
+            f"Error converting dates: {str(e)}"
+        )
+        raise ValueError(f"Error processing dates: {str(e)}")
     
     # Group entries by date to create journal entries
     for idx, (date, group) in enumerate(df.groupby('date')):
         try:
             entries = processor.format_entries_for_api(group)
+            
+            # Format date as string in YYYY-MM-DD format for API
+            date_str = date.strftime('%Y-%m-%d')
+            
             response = st.session_state.api_client.create_journal_entry({
-                'date': date.strftime('%Y-%m-%d'),
+                'date': date_str,
                 'entries': entries
             })
+            
             results.append({
-                'date': date.strftime('%Y-%m-%d'),
+                'date': date_str,
                 'status': 'Success',
                 'message': response.get('message', 'Entry processed successfully')
             })
+            
             if st.session_state.current_batch:
                 st.session_state.current_batch[idx]['processed'] = True
-            error_logger.log_info(f"Successfully processed entries for date {date}")
+            error_logger.log_info(f"Successfully processed entries for date {date_str}")
+            
         except Exception as e:
             error_msg = str(e)
             error_logger.log_error(
                 'api_errors',
                 error_msg,
-                {'date': date.strftime('%Y-%m-%d'), 'entries_count': len(group)}
+                {'date': date.strftime('%Y-%m-%d') if hasattr(date, 'strftime') else str(date),
+                 'entries_count': len(group)}
             )
             results.append({
-                'date': date.strftime('%Y-%m-%d'),
+                'date': date.strftime('%Y-%m-%d') if hasattr(date, 'strftime') else str(date),
                 'status': 'Error',
                 'message': error_msg
             })

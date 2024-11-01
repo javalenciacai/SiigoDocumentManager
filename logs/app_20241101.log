@@ -135,3 +135,19 @@ Journal entries for date invalid-date are not balanced (Debit: 1000.0, Credit: 0
 2024-11-01 02:50:02,946 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
 2024-11-01 02:50:02,980 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-01 02:50:02,983 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:53:14,553 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-01 02:53:14,555 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-01 02:53:14,585 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:53:14,586 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:53:45,229 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:53:45,231 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:53:45,349 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 02:53:45,355 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 02:53:50,695 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:53:50,696 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:53:50,703 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 02:53:50,708 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 02:53:50,711 - siigo_journal_processor - ERROR - processing_errors: 'str' object has no attribute 'strftime'
+2024-11-01 02:53:50,712 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "valid_template.xlsx"
+}
