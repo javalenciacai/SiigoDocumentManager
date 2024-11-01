@@ -125,3 +125,9 @@ Journal entries for date invalid-date are not balanced (Debit: 1000.0, Credit: 0
   "template_version": "1.0"
 }
 2024-11-01 02:42:54,465 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 02:46:18,646 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-01 02:46:18,648 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-01 02:46:18,683 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:46:18,685 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:46:28,022 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 02:46:28,024 - siigo_journal_processor - INFO - Task scheduler initialized
