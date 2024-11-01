@@ -1,6 +1,7 @@
 import requests
 import os
 from datetime import datetime
+from utils.logger import error_logger
 
 class SiigoAPI:
     def __init__(self, username, access_key):
@@ -26,15 +27,33 @@ class SiigoAPI:
             )
             response.raise_for_status()
             self.token = response.json().get('access_token')
+            error_logger.log_info(f"Successfully authenticated user: {self.username}")
             return True
+        except requests.exceptions.RequestException as e:
+            error_logger.log_error(
+                'authentication_errors',
+                str(e),
+                {
+                    'username': self.username,
+                    'status_code': getattr(e.response, 'status_code', None),
+                    'response_text': getattr(e.response, 'text', None)
+                }
+            )
+            return False
         except Exception as e:
-            print(f"Authentication error: {str(e)}")
+            error_logger.log_error(
+                'authentication_errors',
+                str(e),
+                {'username': self.username}
+            )
             return False
     
     def create_journal_entry(self, entry_data):
         """Create a journal entry in Siigo"""
         if not self.token:
-            raise Exception("Not authenticated")
+            error_msg = "Not authenticated"
+            error_logger.log_error('api_errors', error_msg)
+            raise Exception(error_msg)
             
         headers = {
             "Authorization": f"Bearer {self.token}",
@@ -56,6 +75,20 @@ class SiigoAPI:
                 json=payload
             )
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+            error_logger.log_info(
+                f"Successfully created journal entry for date {entry_data['date']}"
+            )
+            return result
         except requests.exceptions.RequestException as e:
-            raise Exception(f"API error: {str(e)}")
+            error_msg = f"API error: {str(e)}"
+            error_logger.log_error(
+                'api_errors',
+                error_msg,
+                {
+                    'status_code': getattr(e.response, 'status_code', None),
+                    'response_text': getattr(e.response, 'text', None),
+                    'date': entry_data['date']
+                }
+            )
+            raise Exception(error_msg)
