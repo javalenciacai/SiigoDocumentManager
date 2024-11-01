@@ -1,0 +1,5 @@
+import pandas as pd
+from datetime import datetime, timedelta
+from utils.template_generator import create_sample_template
+
+create_sample_template('assets/sample_template.xlsx')
