@@ -618,3 +618,107 @@ Unknown columns found: item_No, movement
   "entries_count": 1
 }
 2024-11-01 22:25:17,580 - siigo_journal_processor - INFO - Processing completed: 0 successful, 4 failed
+2024-11-01 23:01:07,461 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-01 23:01:07,468 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-01 23:01:07,803 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 23:01:07,805 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 23:01:15,838 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 23:01:15,840 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 23:01:16,512 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 23:01:16,537 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 23:01:19,261 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 23:01:19,263 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 23:01:19,270 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 23:01:19,276 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 23:01:19,757 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 23:01:19,758 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "response_text": "{\"Status\":400,\"Errors\":[{\"Code\":\"parameter_required\",\"Message\":\"The field document is required\",\"Params\":[\"document\"],\"Detail\":\"Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/parameter_required\"}]}",
+  "date": "2021-05-16"
+}
+2024-11-01 23:01:19,758 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 23:01:19,759 - siigo_journal_processor - DEBUG - Error details: {
+  "date": "2021-05-16",
+  "entries_count": 1
+}
+2024-11-01 23:01:20,899 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 23:01:20,900 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "response_text": "{\"Status\":400,\"Errors\":[{\"Code\":\"parameter_required\",\"Message\":\"The field document is required\",\"Params\":[\"document\"],\"Detail\":\"Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/parameter_required\"}]}",
+  "date": "2021-05-17"
+}
+2024-11-01 23:01:20,900 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 23:01:20,900 - siigo_journal_processor - DEBUG - Error details: {
+  "date": "2021-05-17",
+  "entries_count": 1
+}
+2024-11-01 23:01:21,254 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 23:01:21,254 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "response_text": "{\"Status\":400,\"Errors\":[{\"Code\":\"parameter_required\",\"Message\":\"The field document is required\",\"Params\":[\"document\"],\"Detail\":\"Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/parameter_required\"}]}",
+  "date": "2021-05-18"
+}
+2024-11-01 23:01:21,255 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 23:01:21,255 - siigo_journal_processor - DEBUG - Error details: {
+  "date": "2021-05-18",
+  "entries_count": 1
+}
+2024-11-01 23:01:21,700 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 23:01:21,700 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "response_text": "{\"Status\":400,\"Errors\":[{\"Code\":\"parameter_required\",\"Message\":\"The field document is required\",\"Params\":[\"document\"],\"Detail\":\"Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/parameter_required\"}]}",
+  "date": "2021-05-19"
+}
+2024-11-01 23:01:21,700 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 23:01:21,701 - siigo_journal_processor - DEBUG - Error details: {
+  "date": "2021-05-19",
+  "entries_count": 1
+}
+2024-11-01 23:01:21,706 - siigo_journal_processor - INFO - Processing completed: 0 successful, 4 failed
+2024-11-01 23:03:23,714 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 23:03:23,723 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 23:03:23,723 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD"
+  ]
+}
+2024-11-01 23:03:23,723 - siigo_journal_processor - ERROR - validation_errors: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-01 23:03:23,723 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 23:03:23,723 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-01 23:03:23,723 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-01 23:03:23,734 - siigo_journal_processor - INFO - Successfully read Excel file with 1 rows
+2024-11-01 23:03:23,734 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 23:03:23,734 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations"
+  ]
+}
+2024-11-01 23:03:23,734 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-01 23:03:23,735 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 23:03:23,735 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-01 23:03:23,735 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-01 23:03:23,750 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 23:03:23,757 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 23:03:23,757 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)"
+  ]
+}
+2024-11-01 23:03:23,757 - siigo_journal_processor - ERROR - validation_errors: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-01 23:03:23,757 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 23:03:23,757 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-01 23:03:23,758 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-01 23:03:23,771 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 23:03:23,778 - siigo_journal_processor - INFO - Template validation completed successfully
