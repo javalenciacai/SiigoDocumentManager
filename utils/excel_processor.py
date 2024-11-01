@@ -30,25 +30,36 @@ class ExcelProcessor:
     def format_entries_for_api(self, df_group):
         """Format entries according to Siigo API specifications"""
         try:
-            entries = []
+            items = []
             for _, row in df_group.iterrows():
-                entry = {
-                    "account": str(row['account']),
-                    "description": row['description'],
-                    "debit": float(row['debit']) if row['debit'] > 0 else 0,
-                    "credit": float(row['credit']) if row['credit'] > 0 else 0
+                item = {
+                    "account": {
+                        "code": str(row['account_code']),
+                        "movement": row['movement']
+                    },
+                    "customer": {
+                        "identification": str(row['customer_identification']),
+                        "branch_office": int(row['branch_office'])
+                    },
+                    "description": str(row['description']),
+                    "cost_center": int(row['cost_center']),
+                    "value": float(row['value'])
                 }
-                # Add optional fields if present
-                if 'reference' in row:
-                    entry['reference'] = str(row['reference'])
-                if 'department' in row:
-                    entry['department'] = str(row['department'])
-                entries.append(entry)
-            return entries
+                items.append(item)
+                
+            # Create the complete payload
+            payload = {
+                "document": {"id": int(df_group['document_id'].iloc[0])},
+                "date": df_group['date'].iloc[0],
+                "items": items,
+                "observations": str(df_group['observations'].iloc[0])
+            }
+            
+            return payload
         except Exception as e:
             error_logger.log_error(
                 'processing_errors',
                 f"Error formatting entries: {str(e)}",
-                {'date': df_group['date'].iloc[0]}
+                {'date': df_group['date'].iloc[0] if not df_group.empty else None}
             )
             raise Exception(f"Error formatting entries: {str(e)}")

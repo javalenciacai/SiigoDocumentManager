@@ -5,17 +5,18 @@ from utils.logger import error_logger
 
 class TemplateValidator:
     def __init__(self):
-        self.template_version = "1.0"
+        self.template_version = "2.0"
         self.required_columns = {
+            'document_id': {'type': 'int'},
             'date': {'type': 'datetime', 'format': '%Y-%m-%d'},
-            'account': {'type': 'string', 'pattern': r'^\d+$'},
+            'account_code': {'type': 'string', 'pattern': r'^\d+$'},
+            'movement': {'type': 'string', 'values': ['Debit', 'Credit']},
+            'customer_identification': {'type': 'string'},
+            'branch_office': {'type': 'int', 'min': 0},
             'description': {'type': 'string', 'max_length': 255},
-            'debit': {'type': 'float', 'min': 0},
-            'credit': {'type': 'float', 'min': 0}
-        }
-        self.optional_columns = {
-            'reference': {'type': 'string', 'max_length': 50},
-            'department': {'type': 'string', 'max_length': 50}
+            'cost_center': {'type': 'int', 'min': 0},
+            'value': {'type': 'float', 'min': 0},
+            'observations': {'type': 'string', 'max_length': 500}
         }
         
     def validate_template(self, df):
@@ -61,8 +62,7 @@ class TemplateValidator:
             errors.append(f"Missing required columns: {', '.join(missing_columns)}")
             
         # Check for unknown columns
-        unknown_columns = [col for col in df.columns if col not in self.required_columns 
-                         and col not in self.optional_columns]
+        unknown_columns = [col for col in df.columns if col not in self.required_columns]
         if unknown_columns:
             errors.append(f"Unknown columns found: {', '.join(unknown_columns)}")
             
@@ -74,7 +74,6 @@ class TemplateValidator:
                 
             if rules['type'] == 'datetime':
                 try:
-                    # Try to parse dates with specified format
                     invalid_dates = []
                     for idx, value in df[col].items():
                         try:
@@ -91,13 +90,29 @@ class TemplateValidator:
                 invalid_numbers = df[df[col].isna()]
                 if not invalid_numbers.empty:
                     errors.append(f"Invalid numeric values in column '{col}' at rows: {invalid_numbers.index.tolist()}")
+                
+                if 'min' in rules:
+                    invalid_min = df[df[col] < rules['min']]
+                    if not invalid_min.empty:
+                        errors.append(f"Values below minimum ({rules['min']}) in column '{col}' at rows: {invalid_min.index.tolist()}")
                     
-                # Check minimum value
-                invalid_min = df[df[col] < rules['min']]
-                if not invalid_min.empty:
-                    errors.append(f"Values below minimum ({rules['min']}) in column '{col}' at rows: {invalid_min.index.tolist()}")
+            elif rules['type'] == 'int':
+                try:
+                    df[col] = df[col].astype(int)
+                except:
+                    errors.append(f"Invalid integer values in column '{col}'")
+                
+                if 'min' in rules:
+                    invalid_min = df[df[col] < rules['min']]
+                    if not invalid_min.empty:
+                        errors.append(f"Values below minimum ({rules['min']}) in column '{col}' at rows: {invalid_min.index.tolist()}")
                     
             elif rules['type'] == 'string':
+                if 'values' in rules:
+                    invalid_values = df[~df[col].isin(rules['values'])]
+                    if not invalid_values.empty:
+                        errors.append(f"Invalid values in column '{col}' at rows: {invalid_values.index.tolist()}. Allowed values: {rules['values']}")
+                        
                 if 'pattern' in rules:
                     invalid_pattern = df[~df[col].astype(str).str.match(rules['pattern'])]
                     if not invalid_pattern.empty:
@@ -110,18 +125,6 @@ class TemplateValidator:
                         
     def _validate_business_rules(self, df, errors):
         """Validate business rules"""
-        # Check for balanced entries by date
-        for date, group in df.groupby('date'):
-            total_debit = group['debit'].sum()
-            total_credit = group['credit'].sum()
-            if not np.isclose(total_debit, total_credit, rtol=1e-05):
-                errors.append(f"Journal entries for date {date} are not balanced (Debit: {total_debit}, Credit: {total_credit})")
-                
-        # Check for empty descriptions
-        empty_desc = df[df['description'].isna() | (df['description'].str.strip() == '')]
-        if not empty_desc.empty:
-            errors.append(f"Empty descriptions found at rows: {empty_desc.index.tolist()}")
-            
         # Check for future dates
         try:
             dates = pd.to_datetime(df['date'], format='%Y-%m-%d')
@@ -131,3 +134,10 @@ class TemplateValidator:
         except Exception:
             # Date format errors will be caught in _validate_data_formats
             pass
+        
+        # Validate balanced entries by document_id (Debit/Credit should have same value)
+        for doc_id, group in df.groupby('document_id'):
+            debit_sum = group[group['movement'] == 'Debit']['value'].sum()
+            credit_sum = group[group['movement'] == 'Credit']['value'].sum()
+            if not np.isclose(debit_sum, credit_sum, rtol=1e-05):
+                errors.append(f"Journal entries for document_id {doc_id} are not balanced (Debit: {debit_sum}, Credit: {credit_sum})")

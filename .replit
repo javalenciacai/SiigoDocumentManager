@@ -64,7 +64,7 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 -m unittest tests/test_template_validator.py -v"
+args = "python3 -m unittest tests/test_excel_processor.py -v"
 
 [deployment]
 run = ["sh", "-c", "streamlit run main.py"]

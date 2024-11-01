@@ -151,3 +151,154 @@ Journal entries for date invalid-date are not balanced (Debit: 1000.0, Credit: 0
 2024-11-01 02:53:50,712 - siigo_journal_processor - DEBUG - Error details: {
   "filename": "valid_template.xlsx"
 }
+2024-11-01 21:08:07,661 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-01 21:08:07,666 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-01 21:08:07,710 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:08:07,712 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:08:36,951 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:08:36,953 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:08:37,803 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:08:37,811 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 21:08:43,676 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:08:43,679 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:08:43,691 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:08:43,699 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 21:08:44,466 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 21:08:44,466 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "response_text": "{\"Status\":400,\"Errors\":[{\"Code\":\"parameter_required\",\"Message\":\"The field document is required\",\"Params\":[\"document\"],\"Detail\":\"Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/parameter_required\"}]}",
+  "date": "2024-01-01"
+}
+2024-11-01 21:08:44,467 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-01 21:08:44,467 - siigo_journal_processor - DEBUG - Error details: {
+  "date": "2024-01-01",
+  "entries_count": 2
+}
+2024-11-01 21:08:44,471 - siigo_journal_processor - INFO - Processing completed: 0 successful, 1 failed
+2024-11-01 21:08:48,314 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:08:48,593 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:08:48,601 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:08:48,606 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 21:09:08,971 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:09:08,980 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:09:08,987 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:09:08,994 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 21:11:07,164 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:11:07,173 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:11:07,182 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 21:11:07,183 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:11:07,183 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: account, debit, credit",
+    "Unknown columns found: document_id, item_No, account_code, account_movement, customer_identification, cost_center, value, observations"
+  ]
+}
+2024-11-01 21:11:07,183 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: account, debit, credit
+Unknown columns found: document_id, item_No, account_code, account_movement, customer_identification, cost_center, value, observations
+2024-11-01 21:11:07,184 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "1.0"
+}
+2024-11-01 21:11:07,184 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: account, debit, credit
+Unknown columns found: document_id, item_No, account_code, account_movement, customer_identification, cost_center, value, observations
+2024-11-01 21:11:07,185 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 21:11:07,185 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Missing required columns: account, debit, credit
+Unknown columns found: document_id, item_No, account_code, account_movement, customer_identification, cost_center, value, observations
+2024-11-01 21:11:07,185 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 21:14:41,779 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:14:41,787 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:14:41,787 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD"
+  ]
+}
+2024-11-01 21:14:41,787 - siigo_journal_processor - ERROR - validation_errors: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-01 21:14:41,787 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:14:41,787 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-01 21:14:41,787 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-01 21:14:41,799 - siigo_journal_processor - INFO - Successfully read Excel file with 1 rows
+2024-11-01 21:14:41,799 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:14:41,799 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations"
+  ]
+}
+2024-11-01 21:14:41,799 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-01 21:14:41,800 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:14:41,800 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-01 21:14:41,800 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-01 21:14:41,815 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:14:41,821 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:14:41,821 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)"
+  ]
+}
+2024-11-01 21:14:41,824 - siigo_journal_processor - ERROR - validation_errors: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-01 21:14:41,824 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:14:41,824 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-01 21:14:41,824 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-01 21:14:41,837 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:14:41,844 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 21:14:46,425 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:14:46,432 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:14:46,432 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD"
+  ]
+}
+2024-11-01 21:14:46,433 - siigo_journal_processor - ERROR - validation_errors: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-01 21:14:46,433 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:14:46,433 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-01 21:14:46,433 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-01 21:14:46,443 - siigo_journal_processor - INFO - Successfully read Excel file with 1 rows
+2024-11-01 21:14:46,443 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:14:46,443 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations"
+  ]
+}
+2024-11-01 21:14:46,443 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-01 21:14:46,443 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:14:46,443 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-01 21:14:46,443 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-01 21:14:46,456 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:14:46,463 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:14:46,463 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)"
+  ]
+}
+2024-11-01 21:14:46,463 - siigo_journal_processor - ERROR - validation_errors: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-01 21:14:46,463 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:14:46,463 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-01 21:14:46,463 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-01 21:14:46,475 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:14:46,481 - siigo_journal_processor - INFO - Template validation completed successfully

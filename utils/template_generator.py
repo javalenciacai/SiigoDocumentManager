@@ -4,76 +4,47 @@ import numpy as np
 
 def create_sample_template(output_path):
     """Create a sample Excel template with example journal entries"""
-    # Create sample data with various common accounting scenarios
+    # Create sample data with the new structure
     sample_data = {
-        'date': [
-            # Regular expense entry
-            datetime.now().strftime('%Y-%m-%d'),
-            datetime.now().strftime('%Y-%m-%d'),
-            # Sales entry
-            (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'),
-            (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'),
-            # Payroll entry
-            (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d'),
-            (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d'),
-            (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d'),
+        'document_id': [
+            27441,
+            27441,
         ],
-        'account': [
-            # Regular expense
-            '610505', # Office supplies expense
-            '110505', # Bank account
-            # Sales entry
-            '110505', # Bank account
-            '410505', # Sales revenue
-            # Payroll entry
-            '510505', # Salary expense
-            '237005', # Payroll payable
-            '110505', # Bank account
+        'date': [
+            '2024-01-01',
+            '2024-01-01',
+        ],
+        'account_code': [
+            '11050501',
+            '11100501',
+        ],
+        'movement': [
+            'Debit',
+            'Credit',
+        ],
+        'customer_identification': [
+            '13832081',
+            '13832081',
+        ],
+        'branch_office': [
+            0,
+            0,
         ],
         'description': [
-            'Office supplies purchase',
-            'Payment for office supplies',
-            'Customer payment received',
-            'Sales revenue recorded',
-            'Monthly salary expense',
-            'Payroll tax liability',
-            'Net salary payment'
+            'Descripción Débito',
+            'Descripción Crédito',
         ],
-        'debit': [
-            1000.00, # Expense debit
-            0.00,    # Bank credit
-            2500.00, # Bank debit
-            0.00,    # Sales credit
-            3000.00, # Salary debit
-            0.00,    # Tax liability
-            0.00,    # Bank payment
+        'cost_center': [
+            235,
+            235,
         ],
-        'credit': [
-            0.00,    # Expense debit
-            1000.00, # Bank credit
-            0.00,    # Bank debit
-            2500.00, # Sales credit
-            0.00,    # Salary debit
-            500.00,  # Tax liability
-            2500.00, # Bank payment
+        'value': [
+            119000,
+            119000,
         ],
-        'reference': [
-            'INV-001',
-            'INV-001',
-            'SALE-001',
-            'SALE-001',
-            'PAY-001',
-            'PAY-001',
-            'PAY-001'
-        ],
-        'department': [
-            'ADMIN',
-            'ADMIN',
-            'SALES',
-            'SALES',
-            'HR',
-            'HR',
-            'HR'
+        'observations': [
+            'Observaciones',
+            'Observaciones',
         ]
     }
     

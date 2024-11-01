@@ -15,11 +15,16 @@ class TestExcelProcessor(unittest.TestCase):
     def test_valid_excel_file(self):
         """Test processing of valid Excel file"""
         test_data = {
+            'document_id': [27441, 27441],
             'date': ['2024-01-01', '2024-01-01'],
-            'account': ['1010', '2020'],
-            'description': ['Test debit', 'Test credit'],
-            'debit': [1000.00, 0.00],
-            'credit': [0.00, 1000.00]
+            'account_code': ['11050501', '11100501'],
+            'movement': ['Debit', 'Credit'],
+            'customer_identification': ['13832081', '13832081'],
+            'branch_office': [0, 0],
+            'description': ['Descripción Débito', 'Descripción Crédito'],
+            'cost_center': [235, 235],
+            'value': [119000.00, 119000.00],
+            'observations': ['Observaciones', 'Observaciones']
         }
         excel_file = self.create_test_excel(test_data)
         processor = ExcelProcessor(excel_file)
@@ -41,11 +46,16 @@ class TestExcelProcessor(unittest.TestCase):
     def test_invalid_date_format(self):
         """Test Excel file with invalid date format"""
         test_data = {
+            'document_id': [27441, 27441],
             'date': ['invalid-date', '2024-01-01'],
-            'account': ['1010', '2020'],
+            'account_code': ['11050501', '11100501'],
+            'movement': ['Debit', 'Credit'],
+            'customer_identification': ['13832081', '13832081'],
+            'branch_office': [0, 0],
             'description': ['Test 1', 'Test 2'],
-            'debit': [1000.00, 0.00],
-            'credit': [0.00, 1000.00]
+            'cost_center': [235, 235],
+            'value': [119000.00, 119000.00],
+            'observations': ['Observaciones', 'Observaciones']
         }
         excel_file = self.create_test_excel(test_data)
         processor = ExcelProcessor(excel_file)
@@ -56,11 +66,16 @@ class TestExcelProcessor(unittest.TestCase):
     def test_unbalanced_entries(self):
         """Test Excel file with unbalanced debit and credit entries"""
         test_data = {
+            'document_id': [27441, 27441],
             'date': ['2024-01-01', '2024-01-01'],
-            'account': ['1010', '2020'],
+            'account_code': ['11050501', '11100501'],
+            'movement': ['Debit', 'Credit'],
+            'customer_identification': ['13832081', '13832081'],
+            'branch_office': [0, 0],
             'description': ['Test 1', 'Test 2'],
-            'debit': [1000.00, 0.00],
-            'credit': [0.00, 500.00]  # Unbalanced
+            'cost_center': [235, 235],
+            'value': [119000.00, 90000.00],  # Unbalanced
+            'observations': ['Observaciones', 'Observaciones']
         }
         excel_file = self.create_test_excel(test_data)
         processor = ExcelProcessor(excel_file)

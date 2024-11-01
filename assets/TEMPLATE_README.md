@@ -6,61 +6,77 @@ This document provides guidance on using the sample Excel template for journal e
 
 The template includes the following columns:
 
-1. **date** (Required)
+1. **document_id** (Required)
+   - Format: Integer
+   - Unique identifier for the document
+   - Example: 27441
+
+2. **date** (Required)
    - Format: YYYY-MM-DD
    - Must be current or past date
    - Example: 2024-01-01
 
-2. **account** (Required)
+3. **account_code** (Required)
    - Format: Numeric string
    - Must be valid Siigo account number
-   - Example: 110505 (Bank Account)
+   - Example: 11050501
 
-3. **description** (Required)
+4. **movement** (Required)
+   - Format: Text
+   - Valid values: "Debit" or "Credit"
+   - Example: "Debit"
+
+5. **customer_identification** (Required)
+   - Format: Text
+   - Customer's identification number
+   - Example: "13832081"
+
+6. **branch_office** (Required)
+   - Format: Integer
+   - Default: 0
+   - Example: 0
+
+7. **description** (Required)
    - Format: Text (max 255 characters)
    - Should be clear and descriptive
-   - Example: "Office supplies purchase"
+   - Example: "Descripción Débito"
 
-4. **debit** (Required)
+8. **cost_center** (Required)
+   - Format: Integer
+   - Cost center identifier
+   - Example: 235
+
+9. **value** (Required)
    - Format: Numeric (positive numbers only)
-   - Example: 1000.00
+   - Example: 119000.00
 
-5. **credit** (Required)
-   - Format: Numeric (positive numbers only)
-   - Example: 1000.00
-
-6. **reference** (Optional)
-   - Format: Text (max 50 characters)
-   - Used for tracking documents
-   - Example: "INV-001"
-
-7. **department** (Optional)
-   - Format: Text (max 50 characters)
-   - Example: "SALES"
+10. **observations** (Required)
+    - Format: Text (max 500 characters)
+    - Additional notes or comments
+    - Example: "Observaciones"
 
 ## Business Rules
 
-1. Total debits must equal total credits for each date
-2. All amounts must be positive numbers
-3. Each entry must have either a debit or credit amount (not both)
+1. Total debits must equal total credits for each document_id
+2. All values must be positive numbers
+3. Each entry must specify either Debit or Credit movement
 4. Dates must not be in the future
+5. Branch office must be 0 or greater
+6. Cost center must be a valid integer
 
 ## Sample Entries
 
-The template includes examples of common journal entries:
+The template includes example entries showing:
 
-1. **Regular Expense**
-   - Office supplies purchase with corresponding bank payment
-
-2. **Sales Entry**
-   - Customer payment received with revenue recognition
-
-3. **Payroll Entry**
-   - Salary expense with tax liability and net payment
+1. **Balanced Journal Entry**
+   - Paired debit and credit entries
+   - Matching values
+   - Same document_id for related entries
 
 ## Tips for Usage
 
-1. Group related entries by using the same reference number
-2. Use clear, consistent descriptions
-3. Verify account numbers before submission
-4. Double-check that debits equal credits for each date
+1. Always use matching document_id for related entries
+2. Ensure debit and credit entries balance for each document
+3. Use clear, consistent descriptions
+4. Verify account codes before submission
+5. Double-check customer identification numbers
