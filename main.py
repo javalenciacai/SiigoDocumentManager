@@ -18,6 +18,10 @@ if 'api_client' not in st.session_state:
     st.session_state.api_client = None
 if 'show_error_details' not in st.session_state:
     st.session_state.show_error_details = False
+if 'processing_results' not in st.session_state:
+    st.session_state.processing_results = []
+if 'current_batch' not in st.session_state:
+    st.session_state.current_batch = None
 
 def main():
     st.title("Siigo Journal Entry Processor")
@@ -72,7 +76,74 @@ def main():
                     )
                     st.error(f"Authentication error: {str(e)}")
     else:
+        # Batch Processing Status Dashboard
+        st.header("Batch Processing Status")
+        
+        # Processing Statistics
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            total_entries = sum(1 for result in st.session_state.processing_results 
+                              if result['status'] == 'Success')
+            st.metric("Total Processed", total_entries)
+        with col2:
+            success_rate = (total_entries / len(st.session_state.processing_results) * 100 
+                          if st.session_state.processing_results else 0)
+            st.metric("Success Rate", f"{success_rate:.1f}%")
+        with col3:
+            pending_tasks = len([task for task in TaskScheduler().scheduler.get_jobs()])
+            st.metric("Pending Tasks", pending_tasks)
+
+        # Current Batch Status
+        if st.session_state.current_batch:
+            st.subheader("Current Batch Progress")
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            
+            total = len(st.session_state.current_batch)
+            completed = sum(1 for entry in st.session_state.current_batch if entry.get('processed'))
+            progress = completed / total if total > 0 else 0
+            
+            progress_bar.progress(progress)
+            status_text.text(f"Processing: {completed}/{total} entries")
+
+        # Recent Processing History
+        st.subheader("Recent Processing History")
+        if st.session_state.processing_results:
+            history_df = pd.DataFrame(st.session_state.processing_results)
+            history_df['date'] = pd.to_datetime(history_df['date'])
+            history_df = history_df.sort_values('date', ascending=False)
+            
+            # Apply color coding based on status
+            def color_status(status):
+                return ['background-color: #ff4b4b' if x == 'Error' 
+                        else 'background-color: #00cc00' for x in status]
+            
+            styled_df = history_df.style.apply(lambda x: color_status(x), 
+                                             subset=['status'])
+            st.dataframe(styled_df, use_container_width=True)
+        else:
+            st.info("No processing history available")
+
+        # Scheduled Tasks
+        st.subheader("Scheduled Tasks")
+        scheduler = TaskScheduler()
+        jobs = scheduler.scheduler.get_jobs()
+        
+        if jobs:
+            job_data = []
+            for job in jobs:
+                next_run = job.next_run_time.strftime("%Y-%m-%d %H:%M:%S")
+                job_data.append({
+                    "Next Run": next_run,
+                    "File": getattr(job.args[0], 'name', 'Unknown'),
+                    "Status": "Pending"
+                })
+            st.dataframe(pd.DataFrame(job_data), use_container_width=True)
+        else:
+            st.info("No scheduled tasks")
+
         # File upload section
+        st.header("Upload New Batch")
         uploaded_file = st.file_uploader("Upload Excel file", type=['xlsx', 'xls'])
         
         if uploaded_file:
@@ -85,7 +156,10 @@ def main():
                 
                 if st.button("Process Entries"):
                     with st.spinner("Processing journal entries..."):
+                        st.session_state.current_batch = [{'processed': False} for _ in range(len(df))]
                         results = process_entries(df)
+                        st.session_state.processing_results.extend(results)
+                        st.session_state.current_batch = None
                         display_results(results)
             
             except Exception as e:
@@ -97,7 +171,7 @@ def main():
                 st.error(f"Error processing file: {str(e)}")
         
         # Scheduling section
-        st.subheader("Schedule Processing")
+        st.header("Schedule Processing")
         with st.form("scheduler_form"):
             schedule_time = st.time_input("Select processing time")
             schedule_file = st.file_uploader("Upload Excel file for scheduling", type=['xlsx', 'xls'])
@@ -123,13 +197,15 @@ def logout():
     error_logger.log_info("User logged out")
     st.session_state.authenticated = False
     st.session_state.api_client = None
+    st.session_state.processing_results = []
+    st.session_state.current_batch = None
 
 def process_entries(df):
     results = []
     processor = ExcelProcessor(None)
     
     # Group entries by date to create journal entries
-    for date, group in df.groupby('date'):
+    for idx, (date, group) in enumerate(df.groupby('date')):
         try:
             entries = processor.format_entries_for_api(group)
             response = st.session_state.api_client.create_journal_entry({
@@ -141,6 +217,8 @@ def process_entries(df):
                 'status': 'Success',
                 'message': response.get('message', 'Entry processed successfully')
             })
+            if st.session_state.current_batch:
+                st.session_state.current_batch[idx]['processed'] = True
             error_logger.log_info(f"Successfully processed entries for date {date}")
         except Exception as e:
             error_msg = str(e)
