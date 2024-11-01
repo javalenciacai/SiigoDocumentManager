@@ -42,8 +42,12 @@ class SiigoAPI:
             "Partner-Id": "EmpreSAAS"
         }
         
-        # Transform entry_data to Siigo API format
-        payload = self._format_entry_data(entry_data)
+        # Format the payload according to Siigo API requirements
+        payload = {
+            "document_date": entry_data['date'],
+            "description": "Journal Entry",
+            "entries": entry_data['entries']
+        }
         
         try:
             response = requests.post(
@@ -55,18 +59,3 @@ class SiigoAPI:
             return response.json()
         except requests.exceptions.RequestException as e:
             raise Exception(f"API error: {str(e)}")
-    
-    def _format_entry_data(self, entry_data):
-        """Format entry data according to Siigo API specifications"""
-        return {
-            "document_date": entry_data.get('date', datetime.now().strftime("%Y-%m-%d")),
-            "description": entry_data.get('description', ''),
-            "entries": [
-                {
-                    "account": entry_data.get('account'),
-                    "debit": entry_data.get('debit', 0),
-                    "credit": entry_data.get('credit', 0),
-                    "description": entry_data.get('line_description', '')
-                }
-            ]
-        }

@@ -32,7 +32,7 @@ def main():
                     st.session_state.authenticated = True
                     st.session_state.api_client = api_client
                     st.success("Authentication successful!")
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.error("Authentication failed!")
     else:
@@ -77,17 +77,24 @@ def logout():
 
 def process_entries(df):
     results = []
-    for _, row in df.iterrows():
+    processor = ExcelProcessor(None)  # Create processor instance for data formatting
+    
+    # Group entries by date to create journal entries
+    for date, group in df.groupby('date'):
+        entries = processor.format_entries_for_api(group)
         try:
-            response = st.session_state.api_client.create_journal_entry(row)
+            response = st.session_state.api_client.create_journal_entry({
+                'date': date.strftime('%Y-%m-%d'),
+                'entries': entries
+            })
             results.append({
-                'entry_id': row.get('id', 'N/A'),
+                'date': date.strftime('%Y-%m-%d'),
                 'status': 'Success',
                 'message': response.get('message', 'Entry processed successfully')
             })
         except Exception as e:
             results.append({
-                'entry_id': row.get('id', 'N/A'),
+                'date': date.strftime('%Y-%m-%d'),
                 'status': 'Error',
                 'message': str(e)
             })
