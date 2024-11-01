@@ -47,7 +47,7 @@ class SiigoAPI:
         
         try:
             response = requests.post(
-                f"{self.base_url}/journal-entries",
+                f"{self.base_url}/v1/journals",
                 headers=headers,
                 json=payload
             )
