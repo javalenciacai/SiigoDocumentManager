@@ -12,8 +12,13 @@ class SiigoAPI:
     def authenticate(self):
         """Authenticate with Siigo API"""
         try:
+            headers = {
+                "Content-Type": "application/json",
+                "Partner-Id": "EmpreSAAS"
+            }
             response = requests.post(
-                f"{self.base_url}/auth/token",
+                f"{self.base_url}/auth",
+                headers=headers,
                 json={
                     "username": self.username,
                     "access_key": self.access_key
@@ -33,7 +38,8 @@ class SiigoAPI:
             
         headers = {
             "Authorization": f"Bearer {self.token}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Partner-Id": "EmpreSAAS"
         }
         
         # Transform entry_data to Siigo API format
