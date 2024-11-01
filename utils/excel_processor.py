@@ -48,9 +48,14 @@ class ExcelProcessor:
                 items.append(item)
                 
             # Create the complete payload
+            # Convert Timestamp to string format for JSON serialization
+            date_str = df_group['date'].iloc[0]
+            if isinstance(date_str, pd.Timestamp):
+                date_str = date_str.strftime('%Y-%m-%d')
+                
             payload = {
                 "document": {"id": int(df_group['document_id'].iloc[0])},
-                "date": df_group['date'].iloc[0],
+                "date": date_str,
                 "items": items,
                 "observations": str(df_group['observations'].iloc[0])
             }

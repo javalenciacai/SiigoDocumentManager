@@ -302,3 +302,319 @@ Unknown columns found: document_id, item_No, account_code, account_movement, cus
 }
 2024-11-01 21:14:46,475 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
 2024-11-01 21:14:46,481 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 21:46:31,291 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-01 21:46:31,291 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-01 21:46:31,295 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-01 21:46:31,295 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-01 21:46:31,336 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:46:31,336 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:46:31,339 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:46:31,339 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:46:47,101 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:46:47,101 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:46:47,105 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:46:47,105 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:46:47,115 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 21:46:47,115 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 21:46:47,116 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:46:47,116 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:46:47,117 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: movement, branch_office",
+    "Unknown columns found: item_No, account_movement"
+  ]
+}
+2024-11-01 21:46:47,117 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: movement, branch_office",
+    "Unknown columns found: item_No, account_movement"
+  ]
+}
+2024-11-01 21:46:47,118 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: movement, branch_office
+Unknown columns found: item_No, account_movement
+2024-11-01 21:46:47,118 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: movement, branch_office
+Unknown columns found: item_No, account_movement
+2024-11-01 21:46:47,118 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:46:47,118 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:46:47,120 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, account_movement
+2024-11-01 21:46:47,120 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, account_movement
+2024-11-01 21:46:47,120 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 21:46:47,120 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 21:46:47,120 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, account_movement
+2024-11-01 21:46:47,120 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, account_movement
+2024-11-01 21:46:47,121 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 21:46:47,121 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 21:47:38,431 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:47:38,431 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:47:38,433 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:47:38,433 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 21:47:38,440 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:47:38,440 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 21:47:38,441 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:47:38,441 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 21:47:38,442 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations",
+    "Unknown columns found: account, debit, credit, reference"
+  ]
+}
+2024-11-01 21:47:38,442 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations",
+    "Unknown columns found: account, debit, credit, reference"
+  ]
+}
+2024-11-01 21:47:38,443 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+Unknown columns found: account, debit, credit, reference
+2024-11-01 21:47:38,443 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+Unknown columns found: account, debit, credit, reference
+2024-11-01 21:47:38,444 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:47:38,444 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 21:47:38,445 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+Unknown columns found: account, debit, credit, reference
+2024-11-01 21:47:38,445 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+Unknown columns found: account, debit, credit, reference
+2024-11-01 21:47:38,446 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "valid_template (2).xlsx"
+}
+2024-11-01 21:47:38,446 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "valid_template (2).xlsx"
+}
+2024-11-01 21:47:38,448 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+Unknown columns found: account, debit, credit, reference
+2024-11-01 21:47:38,448 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+Unknown columns found: account, debit, credit, reference
+2024-11-01 21:47:38,448 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "valid_template (2).xlsx"
+}
+2024-11-01 21:47:38,448 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "valid_template (2).xlsx"
+}
+2024-11-01 22:21:15,567 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-01 22:21:15,570 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-01 22:21:15,620 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:21:15,625 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:21:17,801 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:21:17,803 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:21:26,205 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:21:26,207 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:21:26,530 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-01 22:21:26,531 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 22:21:26,531 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations",
+    "Unknown columns found: account, debit, credit, reference"
+  ]
+}
+2024-11-01 22:21:26,531 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+Unknown columns found: account, debit, credit, reference
+2024-11-01 22:21:26,531 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 22:21:26,532 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+Unknown columns found: account, debit, credit, reference
+2024-11-01 22:21:26,532 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "valid_template (2).xlsx"
+}
+2024-11-01 22:21:26,532 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+Unknown columns found: account, debit, credit, reference
+2024-11-01 22:21:26,533 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "valid_template (2).xlsx"
+}
+2024-11-01 22:22:15,382 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:22:15,386 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:22:15,398 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 22:22:15,399 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 22:22:15,400 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: movement, branch_office",
+    "Unknown columns found: item_No, account_movement"
+  ]
+}
+2024-11-01 22:22:15,400 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: movement, branch_office
+Unknown columns found: item_No, account_movement
+2024-11-01 22:22:15,400 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 22:22:15,401 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, account_movement
+2024-11-01 22:22:15,401 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:22:15,401 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, account_movement
+2024-11-01 22:22:15,401 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:23:19,829 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:23:19,832 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:23:19,842 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 22:23:19,843 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 22:23:19,843 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: movement, branch_office",
+    "Unknown columns found: item_No, movement "
+  ]
+}
+2024-11-01 22:23:19,843 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: movement, branch_office
+Unknown columns found: item_No, movement 
+2024-11-01 22:23:19,843 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 22:23:19,843 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, movement 
+2024-11-01 22:23:19,843 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:23:19,843 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, movement 
+2024-11-01 22:23:19,843 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:23:30,821 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:23:30,823 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:23:34,248 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:23:34,250 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:23:34,257 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 22:23:34,257 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 22:23:34,258 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: movement, branch_office",
+    "Unknown columns found: item_No, movement "
+  ]
+}
+2024-11-01 22:23:34,258 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: movement, branch_office
+Unknown columns found: item_No, movement 
+2024-11-01 22:23:34,258 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 22:23:34,259 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, movement 
+2024-11-01 22:23:34,259 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:23:34,259 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Missing required columns: movement, branch_office
+Unknown columns found: item_No, movement 
+2024-11-01 22:23:34,260 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:24:13,844 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:13,846 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:17,171 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:17,173 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:17,183 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 22:24:17,183 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 22:24:17,184 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Unknown columns found: item_No"
+  ]
+}
+2024-11-01 22:24:17,184 - siigo_journal_processor - ERROR - validation_errors: Unknown columns found: item_No
+2024-11-01 22:24:17,185 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 22:24:17,187 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Unknown columns found: item_No
+2024-11-01 22:24:17,188 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:24:17,188 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Unknown columns found: item_No
+2024-11-01 22:24:17,188 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:24:28,445 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:28,447 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:31,005 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:31,006 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:31,014 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 22:24:31,014 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 22:24:31,014 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Unknown columns found: Unnamed: 2"
+  ]
+}
+2024-11-01 22:24:31,015 - siigo_journal_processor - ERROR - validation_errors: Unknown columns found: Unnamed: 2
+2024-11-01 22:24:31,015 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 22:24:31,015 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Unknown columns found: Unnamed: 2
+2024-11-01 22:24:31,015 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:24:31,016 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Unknown columns found: Unnamed: 2
+2024-11-01 22:24:31,017 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:24:40,039 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:40,042 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:43,177 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:43,179 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:43,190 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 22:24:43,199 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 22:24:43,199 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Invalid integer values in column 'branch_office'"
+  ]
+}
+2024-11-01 22:24:43,199 - siigo_journal_processor - ERROR - validation_errors: Invalid integer values in column 'branch_office'
+2024-11-01 22:24:43,200 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-01 22:24:43,200 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Invalid integer values in column 'branch_office'
+2024-11-01 22:24:43,200 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:24:43,201 - siigo_journal_processor - ERROR - processing_errors: Error reading Excel file: Invalid integer values in column 'branch_office'
+2024-11-01 22:24:43,201 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "example3.xlsx"
+}
+2024-11-01 22:24:59,488 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:24:59,490 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:25:03,044 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:25:03,045 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:25:03,054 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 22:25:03,061 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 22:25:17,547 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:25:17,549 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-01 22:25:17,558 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-01 22:25:17,565 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 22:25:17,572 - siigo_journal_processor - ERROR - api_errors: Object of type Timestamp is not JSON serializable
+2024-11-01 22:25:17,572 - siigo_journal_processor - DEBUG - Error details: {
+  "date": "2021-05-16",
+  "entries_count": 1
+}
+2024-11-01 22:25:17,573 - siigo_journal_processor - ERROR - api_errors: Object of type Timestamp is not JSON serializable
+2024-11-01 22:25:17,574 - siigo_journal_processor - DEBUG - Error details: {
+  "date": "2021-05-17",
+  "entries_count": 1
+}
+2024-11-01 22:25:17,575 - siigo_journal_processor - ERROR - api_errors: Object of type Timestamp is not JSON serializable
+2024-11-01 22:25:17,576 - siigo_journal_processor - DEBUG - Error details: {
+  "date": "2021-05-18",
+  "entries_count": 1
+}
+2024-11-01 22:25:17,577 - siigo_journal_processor - ERROR - api_errors: Object of type Timestamp is not JSON serializable
+2024-11-01 22:25:17,577 - siigo_journal_processor - DEBUG - Error details: {
+  "date": "2021-05-19",
+  "entries_count": 1
+}
+2024-11-01 22:25:17,580 - siigo_journal_processor - INFO - Processing completed: 0 successful, 4 failed
