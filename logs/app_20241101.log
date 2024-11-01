@@ -80,3 +80,48 @@ Journal entries for date invalid-date are not balanced (Debit: 1000.0, Credit: 0
   "template_version": "1.0"
 }
 2024-11-01 02:21:18,572 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-01 02:42:54,452 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 02:42:54,452 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Future dates found at rows: [0, 1]"
+  ]
+}
+2024-11-01 02:42:54,452 - siigo_journal_processor - ERROR - validation_errors: Future dates found at rows: [0, 1]
+2024-11-01 02:42:54,452 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "1.0"
+}
+2024-11-01 02:42:54,456 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 02:42:54,456 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD",
+    "Journal entries for date 2024-01-01 are not balanced (Debit: 0.0, Credit: 1000.0)",
+    "Journal entries for date invalid-date are not balanced (Debit: 1000.0, Credit: 0.0)"
+  ]
+}
+2024-11-01 02:42:54,456 - siigo_journal_processor - ERROR - validation_errors: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+Journal entries for date 2024-01-01 are not balanced (Debit: 0.0, Credit: 1000.0)
+Journal entries for date invalid-date are not balanced (Debit: 1000.0, Credit: 0.0)
+2024-11-01 02:42:54,456 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "1.0"
+}
+2024-11-01 02:42:54,457 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 02:42:54,457 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: account, debit, credit"
+  ]
+}
+2024-11-01 02:42:54,457 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: account, debit, credit
+2024-11-01 02:42:54,457 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "1.0"
+}
+2024-11-01 02:42:54,461 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-01 02:42:54,461 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Journal entries for date 2024-01-01 are not balanced (Debit: 1000.0, Credit: 500.0)"
+  ]
+}
+2024-11-01 02:42:54,461 - siigo_journal_processor - ERROR - validation_errors: Journal entries for date 2024-01-01 are not balanced (Debit: 1000.0, Credit: 500.0)
+2024-11-01 02:42:54,461 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "1.0"
+}
+2024-11-01 02:42:54,465 - siigo_journal_processor - INFO - Template validation completed successfully

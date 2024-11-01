@@ -7,6 +7,7 @@ from utils.scheduler import TaskScheduler
 from utils.logger import error_logger
 import os
 from dotenv import load_dotenv
+import io
 
 # Load environment variables
 load_dotenv()
@@ -22,6 +23,23 @@ if 'processing_results' not in st.session_state:
     st.session_state.processing_results = []
 if 'current_batch' not in st.session_state:
     st.session_state.current_batch = None
+
+def export_to_excel(data, filename):
+    """Export data to Excel file"""
+    output = io.BytesIO()
+    writer = pd.ExcelWriter(output, engine='openpyxl')
+    df = pd.DataFrame(data)
+    df.to_excel(writer, index=False, sheet_name='Processing Results')
+    writer.close()
+    output.seek(0)
+    return output
+
+def export_to_csv(data, filename):
+    """Export data to CSV file"""
+    output = io.StringIO()
+    df = pd.DataFrame(data)
+    df.to_csv(output, index=False)
+    return output.getvalue()
 
 def main():
     st.title("Siigo Journal Entry Processor")
@@ -76,6 +94,44 @@ def main():
                     )
                     st.error(f"Authentication error: {str(e)}")
     else:
+        # Export Section
+        st.header("Export Processing Results")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.button("Export to Excel"):
+                if st.session_state.processing_results:
+                    output = export_to_excel(
+                        st.session_state.processing_results,
+                        "processing_results.xlsx"
+                    )
+                    st.download_button(
+                        label="Download Excel File",
+                        data=output,
+                        file_name="processing_results.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+                    error_logger.log_info("Processing results exported to Excel")
+                else:
+                    st.warning("No processing results available to export")
+        
+        with col2:
+            if st.button("Export to CSV"):
+                if st.session_state.processing_results:
+                    output = export_to_csv(
+                        st.session_state.processing_results,
+                        "processing_results.csv"
+                    )
+                    st.download_button(
+                        label="Download CSV File",
+                        data=output,
+                        file_name="processing_results.csv",
+                        mime="text/csv"
+                    )
+                    error_logger.log_info("Processing results exported to CSV")
+                else:
+                    st.warning("No processing results available to export")
+        
         # Batch Processing Status Dashboard
         st.header("Batch Processing Status")
         
