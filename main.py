@@ -88,6 +88,8 @@ if 'selected_task' not in st.session_state:
     st.session_state.selected_task = None
 if 'date_filter' not in st.session_state:
     st.session_state.date_filter = 'all'
+if 'selected_document' not in st.session_state:
+    st.session_state.selected_document = None
 
 def main():
     st.title("Siigo Journal Entry Processor")
@@ -352,8 +354,54 @@ def main():
                     with col3:
                         st.metric("Failed", len(filtered_results) - success_count)
                     
-                    # Display detailed results
-                    st.dataframe(pd.DataFrame(filtered_results), use_container_width=True)
+                    # Display detailed results with scheduling options
+                    st.subheader("Document List")
+                    for idx, result in enumerate(filtered_results):
+                        with st.expander(f"Document {result['document_id']} - {result['status']}"):
+                            st.json(result['details'])
+                            
+                            # Add scheduling options for successful entries
+                            if result['status'] == 'Success':
+                                st.subheader("Schedule Recurring Processing")
+                                schedule_time = st.time_input(f"Select time for document {result['document_id']}")
+                                frequency = st.selectbox(
+                                    "Frequency",
+                                    ["daily", "weekly", "monthly"],
+                                    key=f"freq_{idx}"
+                                )
+                                
+                                schedule_params = {}
+                                if frequency == "weekly":
+                                    schedule_params['day_of_week'] = st.selectbox(
+                                        "Day of Week",
+                                        range(7),
+                                        key=f"dow_{idx}"
+                                    )
+                                elif frequency == "monthly":
+                                    schedule_params['day_of_month'] = st.selectbox(
+                                        "Day of Month",
+                                        range(1, 32),
+                                        key=f"dom_{idx}"
+                                    )
+                                
+                                if st.button("Schedule", key=f"schedule_{idx}"):
+                                    scheduler = TaskScheduler()
+                                    try:
+                                        # Create a temporary file with the entry data
+                                        temp_df = pd.DataFrame([result['details']])
+                                        temp_buffer = io.BytesIO()
+                                        temp_df.to_excel(temp_buffer, index=False)
+                                        temp_buffer.seek(0)
+                                        
+                                        scheduler.schedule_task(
+                                            schedule_time,
+                                            temp_buffer,
+                                            frequency,
+                                            **schedule_params
+                                        )
+                                        st.success(f"Successfully scheduled recurring processing for document {result['document_id']}")
+                                    except Exception as e:
+                                        st.error(f"Error scheduling task: {str(e)}")
                 else:
                     st.info("No documents found for the selected date range")
             else:
