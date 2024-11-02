@@ -14,8 +14,17 @@ class SiigoAPI:
         
     def _extract_company_name(self, token):
         try:
-            # Use jwt.decode instead of trying to access decode directly
-            decoded = jwt.decode(token, algorithms=["HS256"], options={"verify_signature": False})
+            # Import PyJWT with the correct method
+            import jwt
+            
+            # Decode the token without verification
+            decoded = jwt.decode(
+                token,
+                key=None,  # No key needed since we're not verifying
+                algorithms=["HS256"],
+                options={"verify_signature": False}
+            )
+            
             # Get the company name from the decoded token
             company_name = decoded.get('cloud_tenant_company_key')
             if not company_name:
@@ -173,7 +182,7 @@ class SiigoAPI:
             response = requests.get(
                 f"{self.base_url}/v1/document-types",
                 headers=headers,
-                params={"type": "FV"}  # Filter for journal vouchers
+                params={"type": "CC"}  # Filter for journal vouchers
             )
             response.raise_for_status()
             result = response.json()
