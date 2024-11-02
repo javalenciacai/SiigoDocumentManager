@@ -976,3 +976,15 @@
 2024-11-02 04:31:48,606 - siigo_journal_processor - INFO - User javalenciacai@gmail.com authenticated successfully
 2024-11-02 04:31:48,659 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 04:33:15,050 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 04:33:41,567 - siigo_journal_processor - INFO - Successfully authenticated user: javalenciacai@gmail.com
+2024-11-02 04:33:42,063 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 04:33:42,531 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 04:33:42,533 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 04:33:42,533 - siigo_journal_processor - INFO - User javalenciacai@gmail.com authenticated successfully
+2024-11-02 04:33:42,606 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:34:04,742 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 04:34:05,587 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 04:34:06,699 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 04:34:06,700 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 04:34:06,701 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 04:34:06,751 - siigo_journal_processor - INFO - Task scheduler initialized
