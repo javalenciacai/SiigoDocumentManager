@@ -889,3 +889,23 @@
 2024-11-02 04:17:46,764 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 04:17:46,775 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 04:20:03,794 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 04:20:43,103 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 04:20:44,246 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 04:20:45,271 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 04:20:45,273 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 04:20:45,274 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 04:20:45,344 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:20:51,638 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:20:51,646 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:20:51,659 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:21:12,753 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:21:12,760 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:21:12,775 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:21:16,058 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:21:16,065 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:21:16,082 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:21:17,904 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:21:17,911 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:21:17,918 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:21:17,971 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-02 11:23:00 with frequency daily
+2024-11-02 04:21:17,982 - siigo_journal_processor - INFO - Task scheduler initialized
