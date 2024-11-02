@@ -814,3 +814,34 @@
 2024-11-02 04:12:40,655 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 04:12:40,661 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 04:12:50,953 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 04:13:44,398 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 04:13:50,453 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 04:13:51,455 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 04:13:51,457 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 04:13:51,458 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 04:13:51,516 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:13:51,527 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:14:00,637 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:14:00,645 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:14:00,658 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:14:00,666 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:14:05,625 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:14:05,633 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:14:05,647 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:14:05,653 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:14:09,631 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:14:09,639 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:14:09,653 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:14:09,663 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:14:11,098 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:14:11,106 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:14:11,113 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:14:11,194 - siigo_journal_processor - ERROR - processing_errors: Error scheduling task: IntervalTrigger.__init__() got an unexpected keyword argument 'job_id'
+2024-11-02 04:14:11,194 - siigo_journal_processor - DEBUG - Error details: {
+  "schedule_time": "04:14:11.112234",
+  "frequency": "daily"
+}
+2024-11-02 04:14:11,194 - siigo_journal_processor - ERROR - processing_errors: Error scheduling task: Error scheduling task: IntervalTrigger.__init__() got an unexpected keyword argument 'job_id'
+2024-11-02 04:14:11,205 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:14:11,214 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:16:34,008 - siigo_journal_processor - INFO - Database initialized successfully
