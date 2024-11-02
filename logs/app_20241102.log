@@ -589,3 +589,14 @@
 2024-11-02 03:42:55,721 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-02 09:00:55.640638 with frequency weekly
 2024-11-02 03:42:55,737 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 03:46:02,662 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 03:48:19,333 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 03:48:21,224 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 03:48:22,403 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 03:48:22,405 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 03:48:22,405 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 03:48:22,466 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:49:29,717 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:49:35,120 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:49:35,614 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:49:35,857 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:51:54,563 - siigo_journal_processor - INFO - Database initialized successfully
