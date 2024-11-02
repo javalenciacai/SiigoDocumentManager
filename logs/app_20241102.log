@@ -442,3 +442,34 @@
 2024-11-02 02:47:38,032 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
 2024-11-02 02:47:38,039 - siigo_journal_processor - INFO - Template validation completed successfully
 2024-11-02 02:54:07,941 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 02:57:23,428 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 02:57:24,767 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 02:57:25,571 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 02:57:25,572 - siigo_journal_processor - INFO - Successfully fetched catalog data
+2024-11-02 02:57:25,573 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 02:57:25,658 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:57:51,559 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:57:51,637 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-03 02:57:00 with frequency daily
+2024-11-02 02:57:51,638 - siigo_journal_processor - INFO - Processing scheduled daily at 02:57:00 with file example3.xlsx
+2024-11-02 02:57:51,651 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:59:40,760 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:59:40,804 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-03 02:57:00 with frequency daily
+2024-11-02 02:59:40,805 - siigo_journal_processor - INFO - Processing scheduled daily at 02:57:00 with file example3.xlsx
+2024-11-02 02:59:40,822 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:00:16,801 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:00:16,864 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-02 22:15:00 with frequency daily
+2024-11-02 03:00:16,864 - siigo_journal_processor - INFO - Processing scheduled daily at 22:15:00 with file example3.xlsx
+2024-11-02 03:00:16,877 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:00:39,598 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:00:42,216 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:01:28,406 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 03:01:28,415 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 03:01:28,430 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:01:30,349 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 03:01:30,359 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 03:01:31,595 - siigo_journal_processor - INFO - Successfully created journal entry for date 2021-05-16
+2024-11-02 03:01:31,616 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:01:52,947 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 03:01:52,965 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 03:01:53,893 - siigo_journal_processor - INFO - Successfully created journal entry for date 2021-05-16
+2024-11-02 03:01:53,917 - siigo_journal_processor - INFO - Task scheduler initialized
