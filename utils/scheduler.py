@@ -71,10 +71,12 @@ class TaskScheduler:
             asyncio.set_event_loop(loop)
             task_id = loop.run_until_complete(self._save_task_to_db(task_data))
             
-            # Add job to scheduler with string task_id
+            # Extract trigger type and create job with proper parameters
+            trigger = trigger_args.pop('trigger')
             self.scheduler.add_job(
                 self._process_scheduled_file,
-                job_id=str(task_id),  # Convert task_id to string
+                trigger=trigger,
+                job_id=str(task_id),
                 **trigger_args,
                 args=[file, task_id]
             )
