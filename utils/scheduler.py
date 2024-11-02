@@ -16,15 +16,15 @@ class TaskScheduler:
         """Save task to database"""
         return await task_db.add_task(task_data)
         
-    async def _update_task_status(self, task_id, next_run, status):
+    async def _update_task_status(self, task_id, next_run, status, company_name):
         """Update task status in database"""
-        await task_db.update_task_status(task_id, next_run, status)
+        await task_db.update_task_status(task_id, next_run, status, company_name)
         
-    async def _add_task_history(self, task_id, status, result=None):
+    async def _add_task_history(self, task_id, company_name, status, result=None):
         """Add task execution history"""
-        await task_db.add_task_history(task_id, status, result)
+        await task_db.add_task_history(task_id, company_name, status, result)
     
-    def schedule_task(self, time, file, frequency='daily', day_of_week=None, day_of_month=None):
+    def schedule_task(self, time, file, company_name, frequency='daily', day_of_week=None, day_of_month=None):
         """Schedule a task for recurring execution"""
         try:
             # Convert time to datetime
@@ -59,6 +59,7 @@ class TaskScheduler:
                 }
             
             task_data = {
+                'company_name': company_name,
                 'file': getattr(file, 'name', str(file)),
                 'frequency': frequency,
                 'next_run': schedule_time.strftime('%Y-%m-%d %H:%M:%S'),
@@ -71,13 +72,16 @@ class TaskScheduler:
             asyncio.set_event_loop(loop)
             task_id = loop.run_until_complete(self._save_task_to_db(task_data))
             
-            # Add job to scheduler with string task_id
-            self.scheduler.add_job(
+            # Extract trigger type and create job
+            trigger = trigger_args.pop('trigger')
+            job = self.scheduler.add_job(
                 self._process_scheduled_file,
-                job_id=str(task_id),  # Convert task_id to string
+                trigger=trigger,
                 **trigger_args,
-                args=[file, task_id]
+                args=[file, task_id, company_name]
             )
+            # Set job_id after creation
+            job.id = str(task_id)
             
             error_logger.log_info(
                 f"Task scheduled successfully for {schedule_time} with frequency {frequency}"
@@ -93,7 +97,7 @@ class TaskScheduler:
             )
             raise Exception(f"Error scheduling task: {str(e)}")
     
-    async def _process_scheduled_file(self, file, task_id):
+    async def _process_scheduled_file(self, file, task_id, company_name):
         """Process the scheduled file"""
         try:
             from main import process_entries
@@ -118,6 +122,7 @@ class TaskScheduler:
             
             await self._add_task_history(
                 task_id,
+                company_name,
                 'success' if error_count == 0 else 'partial' if success_count > 0 else 'failed',
                 result_summary
             )
@@ -127,7 +132,8 @@ class TaskScheduler:
             await self._update_task_status(
                 task_id,
                 next_run.strftime('%Y-%m-%d %H:%M:%S'),
-                'active'
+                'active',
+                company_name
             )
             
             error_logger.log_info(
@@ -135,17 +141,17 @@ class TaskScheduler:
             )
             
         except Exception as e:
-            await self._add_task_history(task_id, 'failed', {'error': str(e)})
+            await self._add_task_history(task_id, company_name, 'failed', {'error': str(e)})
             error_logger.log_error(
                 'processing_errors',
                 f"Error in scheduled processing: {str(e)}",
                 {'filename': getattr(file, 'name', 'unknown')}
             )
     
-    async def get_scheduled_tasks(self):
+    async def get_scheduled_tasks(self, company_name):
         """Get list of all scheduled tasks with their details"""
         try:
-            return await task_db.get_all_tasks(status='active')
+            return await task_db.get_all_tasks(company_name, status='active')
         except Exception as e:
             error_logger.log_error(
                 'processing_errors',
@@ -153,10 +159,10 @@ class TaskScheduler:
             )
             return []
             
-    async def get_task_history(self, task_id, start_date=None, end_date=None):
+    async def get_task_history(self, task_id, company_name, start_date=None, end_date=None):
         """Get task execution history"""
         try:
-            return await task_db.get_task_history(task_id, start_date, end_date)
+            return await task_db.get_task_history(task_id, company_name, start_date, end_date)
         except Exception as e:
             error_logger.log_error(
                 'processing_errors',
@@ -164,11 +170,11 @@ class TaskScheduler:
             )
             return []
             
-    async def cancel_task(self, task_id):
+    async def cancel_task(self, task_id, company_name):
         """Cancel a scheduled task"""
         try:
             # Get task from database first
-            task = await task_db.get_task(task_id)
+            task = await task_db.get_task(task_id, company_name)
             if not task:
                 raise Exception(f"Task {task_id} not found in database")
                 
@@ -179,7 +185,7 @@ class TaskScheduler:
                 error_logger.log_info(f"Job {task_id} not found in scheduler, continuing with database cleanup")
                 
             # Update database
-            await task_db.delete_task(task_id)
+            await task_db.delete_task(task_id, company_name)
             error_logger.log_info(f"Task {task_id} cancelled successfully")
             
         except Exception as e:

@@ -1,433 +1,328 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timedelta
-import asyncio
-from utils.api_client import SiigoAPI
+from datetime import datetime, time
+import time as time_module
 from utils.excel_processor import ExcelProcessor
+from utils.api_client import SiigoAPI
 from utils.scheduler import TaskScheduler
-from utils.logger import error_logger
 import os
-from dotenv import load_dotenv
-import io
-import json
-
-# Load environment variables
-load_dotenv()
-
-def fetch_catalogs():
-    """Fetch cost centers and document types from Siigo API"""
-    try:
-        # Fetch cost centers
-        cost_centers = st.session_state.api_client.get_cost_centers()
-        st.session_state.cost_centers = cost_centers
-        
-        # Fetch document types
-        document_types = st.session_state.api_client.get_document_types()
-        st.session_state.document_types = document_types
-        
-        error_logger.log_info("Successfully fetched catalogs")
-    except Exception as e:
-        error_logger.log_error(
-            'api_errors',
-            f"Error fetching catalogs: {str(e)}"
-        )
-        st.error(f"Error fetching catalogs: {str(e)}")
-
-def process_entries(df):
-    """Process journal entries from DataFrame"""
-    processor = ExcelProcessor(None)  # Using None as we already have the DataFrame
-    try:
-        results = []
-        for doc_id, group in df.groupby('document_id'):
-            try:
-                payload = processor.format_entries_for_api(group)
-                response = st.session_state.api_client.create_journal_entry(payload)
-                results.append({
-                    'document_id': doc_id,
-                    'status': 'Success',
-                    'details': response
-                })
-            except Exception as e:
-                results.append({
-                    'document_id': doc_id,
-                    'status': 'Failed',
-                    'error': str(e)
-                })
-        return results
-    except Exception as e:
-        error_logger.log_error(
-            'processing_errors',
-            f"Error processing entries: {str(e)}"
-        )
-        raise
-
-def logout():
-    """Clear session state and log out user"""
-    st.session_state.authenticated = False
-    st.session_state.api_client = None
-    st.session_state.cost_centers = None
-    st.session_state.document_types = None
-    st.rerun()
-
-def get_next_run_preview(schedule_time, frequency, day_of_week=None, day_of_month=None):
-    """Get preview of next run time based on schedule parameters"""
-    now = datetime.now()
-    schedule_datetime = datetime.combine(now.date(), schedule_time)
-    
-    if schedule_datetime <= now:
-        schedule_datetime += timedelta(days=1)
-    
-    if frequency == "weekly" and day_of_week is not None:
-        days_ahead = day_of_week - schedule_datetime.weekday()
-        if days_ahead <= 0:
-            days_ahead += 7
-        schedule_datetime += timedelta(days=days_ahead)
-    elif frequency == "monthly" and day_of_month is not None:
-        while schedule_datetime.day != day_of_month:
-            schedule_datetime += timedelta(days=1)
-    
-    return schedule_datetime
+import asyncio
 
 # Initialize session state
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 if 'api_client' not in st.session_state:
     st.session_state.api_client = None
-if 'show_error_details' not in st.session_state:
-    st.session_state.show_error_details = False
-if 'processing_results' not in st.session_state:
-    st.session_state.processing_results = []
-if 'current_batch' not in st.session_state:
-    st.session_state.current_batch = None
+if 'scheduler' not in st.session_state:
+    st.session_state.scheduler = TaskScheduler()
+if 'schedule_time' not in st.session_state:
+    st.session_state.schedule_time = time(9, 0)  # Default to 9:00 AM
 if 'cost_centers' not in st.session_state:
     st.session_state.cost_centers = None
 if 'document_types' not in st.session_state:
     st.session_state.document_types = None
-if 'selected_task' not in st.session_state:
-    st.session_state.selected_task = None
-if 'date_filter' not in st.session_state:
-    st.session_state.date_filter = 'all'
+
+def authenticate():
+    """Authenticate with Siigo API"""
+    username = os.getenv('SIIGO_USERNAME')
+    access_key = os.getenv('SIIGO_ACCESS_KEY')
+    
+    if not username or not access_key:
+        st.error("Missing credentials. Please check environment variables.")
+        return False
+        
+    api_client = SiigoAPI(username, access_key)
+    if api_client.authenticate():
+        st.session_state.authenticated = True
+        st.session_state.api_client = api_client
+        return True
+    return False
+
+def process_entries(df):
+    """Process journal entries"""
+    results = []
+    for doc_id, group in df.groupby('document_id'):
+        try:
+            payload = ExcelProcessor(None).format_entries_for_api(group)
+            response = st.session_state.api_client.create_journal_entry(payload)
+            results.append({
+                'document_id': doc_id,
+                'status': 'Success',
+                'response': response
+            })
+        except Exception as e:
+            results.append({
+                'document_id': doc_id,
+                'status': 'Failed',
+                'error': str(e)
+            })
+    return results
+
+def schedule_processing(file, time, frequency='daily', params=None):
+    """Schedule file processing"""
+    if not st.session_state.authenticated:
+        raise Exception("Authentication required")
+        
+    if not file:
+        raise Exception("File required")
+        
+    # Schedule the task
+    schedule_info = st.session_state.scheduler.schedule_task(
+        time=time,
+        file=file,
+        company_name=st.session_state.api_client.company_name,
+        frequency=frequency,
+        day_of_week=params.get('day_of_week') if params else None,
+        day_of_month=params.get('day_of_month') if params else None
+    )
+    
+    return schedule_info
+
+async def load_scheduled_tasks():
+    """Load scheduled tasks from database"""
+    if st.session_state.authenticated:
+        return await st.session_state.scheduler.get_scheduled_tasks(
+            st.session_state.api_client.company_name
+        )
+    return []
+
+def load_catalogs():
+    """Load cost centers and document types from API"""
+    if st.session_state.authenticated and st.session_state.api_client:
+        try:
+            st.session_state.cost_centers = st.session_state.api_client.get_cost_centers()
+            st.session_state.document_types = st.session_state.api_client.get_document_types()
+        except Exception as e:
+            st.error(f"Error loading catalogs: {str(e)}")
 
 def main():
-    st.title("Siigo Journal Entry Processor")
+    st.set_page_config(
+        page_title="Siigo Journal Entry Processor",
+        page_icon="📊",
+        layout="wide"
+    )
     
-    # Sidebar content
-    with st.sidebar:
-        if st.session_state.authenticated:
-            st.success("Logged in successfully")
-            st.button("Logout", on_click=logout)
-            st.session_state.show_error_details = st.checkbox("Show Error Details")
-            
-            # Display error statistics
-            st.subheader("Error Statistics")
-            stats = error_logger.get_error_stats()
-            for error_type, count in stats.items():
-                st.metric(error_type.replace('_', ' ').title(), count)
-            
-            if st.session_state.show_error_details:
-                st.subheader("Recent Errors")
-                recent_errors = error_logger.get_recent_errors()
-                for error in recent_errors:
-                    st.text(error)
-                    
-                if recent_errors:
-                    try:
-                        error_text = recent_errors[-1]
-                        if 'error_details' in error_text:
-                            st.json(json.loads(error_text.split('error_details:', 1)[1]))
-                    except:
-                        pass
-    
-    # Authentication section
+    # Authentication check and login form
     if not st.session_state.authenticated:
-        with st.form("auth_form"):
-            username = st.text_input("Username")
-            access_key = st.text_input("Access Key", type="password")
-            submit = st.form_submit_button("Login")
+        st.title("🔐 Login to Siigo API")
+        username = st.text_input("Username")
+        access_key = st.text_input("Access Key", type="password")
+        
+        if st.button("Login"):
+            os.environ['SIIGO_USERNAME'] = username
+            os.environ['SIIGO_ACCESS_KEY'] = access_key
             
-            if submit:
-                try:
-                    api_client = SiigoAPI(username, access_key)
-                    if api_client.authenticate():
-                        st.session_state.authenticated = True
-                        st.session_state.api_client = api_client
-                        fetch_catalogs()
-                        error_logger.log_info(f"User {username} authenticated successfully")
-                        st.success("Authentication successful!")
-                        st.rerun()
-                    else:
-                        error_logger.log_error(
-                            'authentication_errors',
-                            f"Authentication failed for user {username}"
-                        )
-                        st.error("Authentication failed!")
-                except Exception as e:
-                    error_logger.log_error(
-                        'authentication_errors',
-                        str(e),
-                        {'username': username}
-                    )
-                    st.error(f"Authentication error: {str(e)}")
-    else:
-        tab1, tab2, tab3, tab4, tab5 = st.tabs([
-            "Journal Entry Processing",
-            "Catalog Lookup",
-            "Export Results",
-            "Processing Status",
-            "Processed Documents"
-        ])
-
-        # Journal Entry Processing tab
-        with tab1:
-            st.header("Journal Entry Processing")
-            
-            # File upload section
-            uploaded_file = st.file_uploader("Upload Excel File", type=['xlsx'])
-            
-            if uploaded_file:
-                try:
-                    processor = ExcelProcessor(uploaded_file)
-                    df = processor.read_excel()
-                    st.success("File validated successfully!")
-                    
-                    st.subheader("Preview")
-                    st.dataframe(df.head(), use_container_width=True)
-                    
-                    # Processing and Scheduling sections in tabs
-                    process_tab, schedule_tab = st.tabs(["Process Now", "Schedule Processing"])
-                    
-                    with process_tab:
-                        if st.button("Process Entries", type="primary"):
-                            with st.spinner("Processing entries..."):
-                                results = process_entries(df)
-                                st.session_state.processing_results = results
-                                
-                                success_count = sum(1 for r in results if r['status'] == 'Success')
-                                st.success(f"Processed {len(results)} entries ({success_count} successful)")
-                    
-                    with schedule_tab:
-                        st.markdown("### Schedule Settings")
-                        
-                        # Enhanced scheduling interface with help text
-                        col1, col2, col3 = st.columns(3)
-                        
-                        with col1:
-                            frequency = st.selectbox(
-                                "Frequency",
-                                ["daily", "weekly", "monthly"],
-                                help="How often to process this file"
-                            )
-                            
-                        with col2:
-                            schedule_time = st.time_input(
-                                "Processing Time",
-                                value=datetime.now().replace(hour=9, minute=0).time(),
-                                help="Time of day when processing should occur (default: 9:00 AM)"
-                            )
-                            
-                        with col3:
-                            if frequency == "weekly":
-                                days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-                                day_index = st.selectbox(
-                                    "Day of Week",
-                                    range(len(days)),
-                                    format_func=lambda x: days[x],
-                                    help="Select which day of the week to process"
-                                )
-                                schedule_params = {'day_of_week': day_index}
-                            elif frequency == "monthly":
-                                day_of_month = st.selectbox(
-                                    "Day of Month",
-                                    range(1, 32),
-                                    help="Select which day of the month to process"
-                                )
-                                schedule_params = {'day_of_month': day_of_month}
-                            else:
-                                schedule_params = {}
-                                st.info("File will be processed daily at the specified time")
-                        
-                        # Preview next run with improved formatting
-                        next_run = get_next_run_preview(
-                            schedule_time,
-                            frequency,
-                            day_of_week=schedule_params.get('day_of_week'),
-                            day_of_month=schedule_params.get('day_of_month')
-                        )
-                        
-                        st.info(f"📅 Next scheduled run: {next_run.strftime('%A, %B %d, %Y at %I:%M %p')}")
-                        
-                        # Schedule button with confirmation
-                        if st.button("Schedule Processing", type="primary"):
-                            try:
-                                scheduler = TaskScheduler()
-                                scheduler.schedule_task(schedule_time, uploaded_file, frequency, **schedule_params)
-                                st.success("✅ Task scheduled successfully!")
-                                
-                                # Show schedule details in a clean format
-                                st.markdown("### Schedule Details")
-                                details = {
-                                    "📄 File": uploaded_file.name,
-                                    "🔄 Frequency": frequency.capitalize(),
-                                    "⏰ Time": schedule_time.strftime("%I:%M %p"),
-                                    "📅 Next Run": next_run.strftime("%A, %B %d, %Y at %I:%M %p")
-                                }
-                                if frequency == "weekly":
-                                    details["📅 Day"] = days[schedule_params['day_of_week']]
-                                elif frequency == "monthly":
-                                    details["📅 Day"] = f"{schedule_params['day_of_month']}th"
-                                
-                                for key, value in details.items():
-                                    st.markdown(f"**{key}:** {value}")
-                                    
-                            except Exception as e:
-                                st.error(f"❌ Error scheduling task: {str(e)}")
-                                error_logger.log_error(
-                                    'processing_errors',
-                                    f"Error scheduling task: {str(e)}"
-                                )
-                                
-                except Exception as e:
-                    st.error(f"Error processing file: {str(e)}")
-
-        # Catalog Lookup tab
-        with tab2:
-            st.header("Catalog Lookup")
-            
-            # Add refresh button
-            if st.button("Refresh Catalogs"):
-                fetch_catalogs()
-                st.success("Catalogs refreshed successfully!")
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.subheader("Cost Centers")
-                if st.session_state.cost_centers:
-                    cost_centers_df = pd.DataFrame(st.session_state.cost_centers)
-                    st.dataframe(cost_centers_df, use_container_width=True)
-                else:
-                    st.info("No cost centers loaded")
-            
-            with col2:
-                st.subheader("Document Types")
-                if st.session_state.document_types:
-                    doc_types_df = pd.DataFrame(st.session_state.document_types)
-                    st.dataframe(doc_types_df, use_container_width=True)
-                else:
-                    st.info("No document types loaded")
-
-        # Export Results tab
-        with tab3:
-            st.header("Export Results")
-            
-            if st.session_state.processing_results:
-                df = pd.DataFrame(st.session_state.processing_results)
-                
-                # Display results
-                st.subheader("Processing Results")
-                st.dataframe(df, use_container_width=True)
-                
-                # Export options
-                export_format = st.selectbox("Export Format", ["Excel", "CSV"])
-                
-                if st.button("Download Results"):
-                    if export_format == "Excel":
-                        buffer = io.BytesIO()
-                        df.to_excel(buffer, index=False)
-                        buffer.seek(0)
-                        st.download_button(
-                            "Download Excel",
-                            buffer,
-                            "processing_results.xlsx",
-                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        )
-                    else:
-                        buffer = io.StringIO()
-                        df.to_csv(buffer, index=False)
-                        st.download_button(
-                            "Download CSV",
-                            buffer.getvalue(),
-                            "processing_results.csv",
-                            "text/csv"
-                        )
-            else:
-                st.info("No processing results available")
-
-        # Processing Status tab
-        with tab4:
-            st.header("Processing Status")
-            
-            # Add refresh button for tasks
-            if st.button("Refresh Status"):
+            if authenticate():
+                st.success("✅ Authentication successful!")
+                st.info(f"Connected to company: {st.session_state.api_client.company_name}")
+                # Load catalogs after successful authentication
+                load_catalogs()
+                time_module.sleep(2)
                 st.rerun()
-            
-            # Initialize scheduler
-            scheduler = TaskScheduler()
-            
-            # Get scheduled tasks
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            tasks = loop.run_until_complete(scheduler.get_scheduled_tasks())
-            
-            if tasks:
-                # Display tasks in a table
-                tasks_df = pd.DataFrame(tasks)
-                st.dataframe(tasks_df, use_container_width=True)
-                
-                # Add Cancel buttons for each task with improved layout
-                for _, task in tasks_df.iterrows():
-                    task_id = task['id']
-                    col1, col2 = st.columns([3, 1])
-                    with col1:
-                        st.warning(f"Task {task_id}: {task['file_name']}")
-                    with col2:
-                        if st.button(f"Cancel Task {task_id}", key=f"cancel_{task_id}"):
-                            try:
-                                loop.run_until_complete(scheduler.cancel_task(task_id))
-                                st.success("✅ Task cancelled successfully!")
-                                st.rerun()  # Refresh the page
-                            except Exception as e:
-                                st.error(f"❌ Error cancelling task: {str(e)}")
-                                error_logger.log_error(
-                                    'processing_errors',
-                                    f"Error cancelling task: {str(e)}",
-                                    {'task_id': task_id}
-                                )
-                
-                # Task details
-                if st.session_state.selected_task:
-                    st.subheader("Task Details")
-                    task = next((t for t in tasks if t['id'] == st.session_state.selected_task), None)
-                    if task:
-                        st.json(task)
             else:
-                st.info("No active scheduled tasks")
+                st.error("❌ Authentication failed. Please check your credentials.")
+        st.stop()  # Don't show rest of UI until authenticated
+        
+    # Main interface
+    st.title(f"📊 Siigo Journal Entry Processor")
+    st.caption(f"Connected as: {st.session_state.api_client.company_name}")
+    
+    # Tabs
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "Journal Entry Processing",
+        "Scheduled Documents",
+        "Processing Status",
+        "Processed Documents",
+        "Catalogs"
+    ])
+    
+    # Journal Entry Processing Tab
+    with tab1:
+        st.header("Upload and Process")
+        
+        # File upload
+        uploaded_file = st.file_uploader(
+            "Choose an Excel file",
+            type=['xlsx', 'xls'],
+            help="Upload your journal entries Excel file"
+        )
+        
+        if uploaded_file:
+            try:
+                processor = ExcelProcessor(uploaded_file)
+                df = processor.read_excel()
+                
+                st.success("✅ File validated successfully!")
+                
+                # Display preview
+                with st.expander("Preview Data"):
+                    st.dataframe(df)
+                    
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.subheader("Process Now")
+                    if st.button("Process Entries", type="primary"):
+                        with st.spinner("Processing entries..."):
+                            results = process_entries(df)
+                            
+                            # Display results
+                            success_count = sum(1 for r in results if r['status'] == 'Success')
+                            st.write(f"Processed {len(results)} documents:")
+                            st.write(f"- ✅ {success_count} successful")
+                            st.write(f"- ❌ {len(results) - success_count} failed")
+                            
+                            # Show detailed results
+                            with st.expander("Detailed Results"):
+                                for result in results:
+                                    if result['status'] == 'Success':
+                                        st.success(f"Document {result['document_id']}: Success")
+                                    else:
+                                        st.error(
+                                            f"Document {result['document_id']}: Failed\n"
+                                            f"Error: {result['error']}"
+                                        )
+                                        
+                with col2:
+                    st.subheader("Schedule Processing")
+                    frequency = st.selectbox(
+                        "Frequency",
+                        ['daily', 'weekly', 'monthly'],
+                        help="Select how often to process this file"
+                    )
+                    
+                    schedule_params = {}
+                    
+                    if frequency == 'weekly':
+                        schedule_params['day_of_week'] = st.selectbox(
+                            "Day of Week",
+                            range(7),
+                            format_func=lambda x: ['Monday', 'Tuesday', 'Wednesday',
+                                               'Thursday', 'Friday', 'Saturday',
+                                               'Sunday'][x]
+                        )
+                    elif frequency == 'monthly':
+                        schedule_params['day_of_month'] = st.selectbox(
+                            "Day of Month",
+                            range(1, 29)  # Avoid 29-31 for consistency
+                        )
+                        
+                    st.session_state.schedule_time = st.time_input(
+                        "Processing Time",
+                        value=st.session_state.schedule_time
+                    )
+                    
+                    if st.button("Schedule Processing", type="primary"):
+                        try:
+                            schedule_info = schedule_processing(
+                                file=uploaded_file,
+                                time=st.session_state.schedule_time,
+                                frequency=frequency,
+                                params=schedule_params
+                            )
+                            st.success(f"✅ Task scheduled successfully! Next run at {schedule_info['next_run']}")
+                            st.balloons()  # Add celebratory animation
+                        except Exception as e:
+                            st.error(f"Error scheduling task: {str(e)}")
+                            
+            except Exception as e:
+                st.error(f"Error processing file: {str(e)}")
+                
+    # Scheduled Documents Tab
+    with tab2:
+        st.header("Scheduled Documents")
+        
+        if st.button("Refresh"):
+            st.rerun()
+            
+        # Load scheduled tasks
+        tasks = asyncio.run(load_scheduled_tasks())
+        
+        if tasks:
+            for task in tasks:
+                with st.expander(f"📄 {task['file_name']} - Next run: {task['next_run']}"):
+                    st.write(f"Frequency: {task['frequency'].title()}")
+                    if task['frequency'] == 'weekly':
+                        st.write(f"Day: {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][task['day_of_week']]}")
+                    elif task['frequency'] == 'monthly':
+                        st.write(f"Day: {task['day_of_month']}")
+                        
+                    # Add cancel button
+                    if st.button("Cancel Schedule", key=f"cancel_{task['id']}"):
+                        try:
+                            asyncio.run(st.session_state.scheduler.cancel_task(
+                                task['id'],
+                                st.session_state.api_client.company_name
+                            ))
+                            st.success("Schedule cancelled successfully!")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Error cancelling schedule: {str(e)}")
+        else:
+            st.info("No scheduled documents found")
+            
+    # Processing Status Tab
+    with tab3:
+        st.header("Processing Status")
+        if st.button("Refresh Status"):
+            st.rerun()
+            
+        # Add processing status information here
+        st.info("Processing status information will be displayed here")
+        
+    # Processed Documents Tab
+    with tab4:
+        st.header("Processed Documents")
+        if st.button("Refresh Documents"):
+            st.rerun()
+            
+        # Add processed documents information here
+        st.info("Processed documents information will be displayed here")
 
-        # Processed Documents tab
-        with tab5:
-            st.header("Processed Documents")
+    # Catalogs Tab
+    with tab5:
+        st.header("Catalogs")
+        
+        # Add refresh button for catalogs
+        if st.button("Refresh Catalogs"):
+            load_catalogs()
+            st.rerun()
             
-            # Date filter options
-            filter_options = {
-                'all': 'All Time',
-                'today': 'Today',
-                'week': 'This Week',
-                'month': 'This Month'
-            }
-            selected_filter = st.selectbox(
-                "Date Range",
-                list(filter_options.keys()),
-                format_func=lambda x: filter_options[x]
-            )
-            
-            # Get processed documents based on filter
-            documents = []  # Implement document retrieval based on filter
-            
-            if documents:
-                df = pd.DataFrame(documents)
-                st.dataframe(df, use_container_width=True)
+        # Cost Centers Section
+        st.subheader("Cost Centers")
+        if st.session_state.cost_centers:
+            # Create a DataFrame for better display
+            cost_centers_df = pd.DataFrame(st.session_state.cost_centers)
+            if not cost_centers_df.empty:
+                # Add search box for cost centers
+                cost_center_search = st.text_input("Search Cost Centers", "")
+                if cost_center_search:
+                    cost_centers_df = cost_centers_df[
+                        cost_centers_df.apply(lambda x: x.astype(str).str.contains(cost_center_search, case=False).any(), axis=1)
+                    ]
+                st.dataframe(cost_centers_df)
             else:
-                st.info("No processed documents available")
+                st.info("No cost centers found")
+        else:
+            st.info("Cost centers not loaded. Click refresh to load data.")
+            
+        # Document Types Section
+        st.subheader("Document Types")
+        if st.session_state.document_types:
+            # Create a DataFrame for better display
+            doc_types_df = pd.DataFrame(st.session_state.document_types)
+            if not doc_types_df.empty:
+                # Add search box for document types
+                doc_type_search = st.text_input("Search Document Types", "")
+                if doc_type_search:
+                    doc_types_df = doc_types_df[
+                        doc_types_df.apply(lambda x: x.astype(str).str.contains(doc_type_search, case=False).any(), axis=1)
+                    ]
+                st.dataframe(doc_types_df)
+            else:
+                st.info("No document types found")
+        else:
+            st.info("Document types not loaded. Click refresh to load data.")
 
 if __name__ == "__main__":
     main()
