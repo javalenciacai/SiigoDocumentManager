@@ -17,6 +17,10 @@ if 'scheduler' not in st.session_state:
     st.session_state.scheduler = TaskScheduler()
 if 'schedule_time' not in st.session_state:
     st.session_state.schedule_time = time(9, 0)  # Default to 9:00 AM
+if 'cost_centers' not in st.session_state:
+    st.session_state.cost_centers = None
+if 'document_types' not in st.session_state:
+    st.session_state.document_types = None
 
 def authenticate():
     """Authenticate with Siigo API"""
@@ -82,6 +86,15 @@ async def load_scheduled_tasks():
         )
     return []
 
+def load_catalogs():
+    """Load cost centers and document types from API"""
+    if st.session_state.authenticated and st.session_state.api_client:
+        try:
+            st.session_state.cost_centers = st.session_state.api_client.get_cost_centers()
+            st.session_state.document_types = st.session_state.api_client.get_document_types()
+        except Exception as e:
+            st.error(f"Error loading catalogs: {str(e)}")
+
 def main():
     st.set_page_config(
         page_title="Siigo Journal Entry Processor",
@@ -102,6 +115,8 @@ def main():
             if authenticate():
                 st.success("✅ Authentication successful!")
                 st.info(f"Connected to company: {st.session_state.api_client.company_name}")
+                # Load catalogs after successful authentication
+                load_catalogs()
                 time_module.sleep(2)
                 st.rerun()
             else:
@@ -113,11 +128,12 @@ def main():
     st.caption(f"Connected as: {st.session_state.api_client.company_name}")
     
     # Tabs
-    tab1, tab2, tab3, tab4 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "Journal Entry Processing",
         "Scheduled Documents",
         "Processing Status",
-        "Processed Documents"
+        "Processed Documents",
+        "Catalogs"
     ])
     
     # Journal Entry Processing Tab
@@ -262,6 +278,51 @@ def main():
             
         # Add processed documents information here
         st.info("Processed documents information will be displayed here")
+
+    # Catalogs Tab
+    with tab5:
+        st.header("Catalogs")
+        
+        # Add refresh button for catalogs
+        if st.button("Refresh Catalogs"):
+            load_catalogs()
+            st.rerun()
+            
+        # Cost Centers Section
+        st.subheader("Cost Centers")
+        if st.session_state.cost_centers:
+            # Create a DataFrame for better display
+            cost_centers_df = pd.DataFrame(st.session_state.cost_centers)
+            if not cost_centers_df.empty:
+                # Add search box for cost centers
+                cost_center_search = st.text_input("Search Cost Centers", "")
+                if cost_center_search:
+                    cost_centers_df = cost_centers_df[
+                        cost_centers_df.apply(lambda x: x.astype(str).str.contains(cost_center_search, case=False).any(), axis=1)
+                    ]
+                st.dataframe(cost_centers_df)
+            else:
+                st.info("No cost centers found")
+        else:
+            st.info("Cost centers not loaded. Click refresh to load data.")
+            
+        # Document Types Section
+        st.subheader("Document Types")
+        if st.session_state.document_types:
+            # Create a DataFrame for better display
+            doc_types_df = pd.DataFrame(st.session_state.document_types)
+            if not doc_types_df.empty:
+                # Add search box for document types
+                doc_type_search = st.text_input("Search Document Types", "")
+                if doc_type_search:
+                    doc_types_df = doc_types_df[
+                        doc_types_df.apply(lambda x: x.astype(str).str.contains(doc_type_search, case=False).any(), axis=1)
+                    ]
+                st.dataframe(doc_types_df)
+            else:
+                st.info("No document types found")
+        else:
+            st.info("Document types not loaded. Click refresh to load data.")
 
 if __name__ == "__main__":
     main()
