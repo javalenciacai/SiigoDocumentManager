@@ -107,6 +107,8 @@ if 'selected_task' not in st.session_state:
     st.session_state.selected_task = None
 if 'date_filter' not in st.session_state:
     st.session_state.date_filter = 'all'
+if 'schedule_time' not in st.session_state:
+    st.session_state.schedule_time = None
 
 def main():
     st.title("Siigo Journal Entry Processor")
@@ -219,12 +221,25 @@ def main():
                             )
                             
                         with col2:
-                            current_time = datetime.now().time()
-                            schedule_time = st.time_input(
-                                "Processing Time",
-                                value=current_time,
-                                help="Select the time of day when processing should occur"
-                            )
+                            # Allow complete time selection without default value
+                            hours = st.number_input("Hour (24-hour format)", 
+                                                min_value=0, 
+                                                max_value=23, 
+                                                value=None,
+                                                placeholder="Enter hour (0-23)",
+                                                help="Enter the hour in 24-hour format")
+                            
+                            minutes = st.number_input("Minute", 
+                                                  min_value=0, 
+                                                  max_value=59, 
+                                                  value=None,
+                                                  placeholder="Enter minute (0-59)",
+                                                  help="Enter the minute")
+                            
+                            # Create time object only when both hours and minutes are set
+                            if hours is not None and minutes is not None:
+                                schedule_time = datetime.strptime(f"{hours:02d}:{minutes:02d}", "%H:%M").time()
+                                st.session_state.schedule_time = schedule_time
                             
                         with col3:
                             if frequency == "weekly":
@@ -247,45 +262,48 @@ def main():
                                 schedule_params = {}
                                 st.info("File will be processed daily at the specified time")
                         
-                        # Preview next run with improved formatting
-                        next_run = get_next_run_preview(
-                            schedule_time,
-                            frequency,
-                            day_of_week=schedule_params.get('day_of_week'),
-                            day_of_month=schedule_params.get('day_of_month')
-                        )
-                        
-                        st.info(f"📅 Next scheduled run: {next_run.strftime('%A, %B %d, %Y at %I:%M %p')}")
-                        
-                        # Schedule button with confirmation
-                        if st.button("Schedule Processing", type="primary"):
-                            try:
-                                scheduler = TaskScheduler()
-                                scheduler.schedule_task(schedule_time, uploaded_file, frequency, **schedule_params)
-                                st.success("✅ Task scheduled successfully!")
-                                
-                                # Show schedule details in a clean format
-                                st.markdown("### Schedule Details")
-                                details = {
-                                    "📄 File": uploaded_file.name,
-                                    "🔄 Frequency": frequency.capitalize(),
-                                    "⏰ Time": schedule_time.strftime("%I:%M %p"),
-                                    "📅 Next Run": next_run.strftime("%A, %B %d, %Y at %I:%M %p")
-                                }
-                                if frequency == "weekly":
-                                    details["📅 Day"] = days[schedule_params['day_of_week']]
-                                elif frequency == "monthly":
-                                    details["📅 Day"] = f"{schedule_params['day_of_month']}th"
-                                
-                                for key, value in details.items():
-                                    st.markdown(f"**{key}:** {value}")
+                        # Preview next run only when time is set
+                        if st.session_state.schedule_time:
+                            next_run = get_next_run_preview(
+                                st.session_state.schedule_time,
+                                frequency,
+                                day_of_week=schedule_params.get('day_of_week'),
+                                day_of_month=schedule_params.get('day_of_month')
+                            )
+                            
+                            st.info(f"📅 Next scheduled run: {next_run.strftime('%A, %B %d, %Y at %I:%M %p')}")
+                            
+                            # Schedule button with confirmation
+                            if st.button("Schedule Processing", type="primary"):
+                                try:
+                                    scheduler = TaskScheduler()
+                                    scheduler.schedule_task(st.session_state.schedule_time, uploaded_file, frequency, **schedule_params)
+                                    st.success("✅ Task scheduled successfully!")
                                     
-                            except Exception as e:
-                                st.error(f"❌ Error scheduling task: {str(e)}")
-                                error_logger.log_error(
-                                    'processing_errors',
-                                    f"Error scheduling task: {str(e)}"
-                                )
+                                    # Show schedule details in a clean format
+                                    st.markdown("### Schedule Details")
+                                    details = {
+                                        "📄 File": uploaded_file.name,
+                                        "🔄 Frequency": frequency.capitalize(),
+                                        "⏰ Time": st.session_state.schedule_time.strftime("%I:%M %p"),
+                                        "📅 Next Run": next_run.strftime("%A, %B %d, %Y at %I:%M %p")
+                                    }
+                                    if frequency == "weekly":
+                                        details["📅 Day"] = days[schedule_params['day_of_week']]
+                                    elif frequency == "monthly":
+                                        details["📅 Day"] = f"{schedule_params['day_of_month']}th"
+                                    
+                                    for key, value in details.items():
+                                        st.markdown(f"**{key}:** {value}")
+                                        
+                                except Exception as e:
+                                    st.error(f"❌ Error scheduling task: {str(e)}")
+                                    error_logger.log_error(
+                                        'processing_errors',
+                                        f"Error scheduling task: {str(e)}"
+                                    )
+                        else:
+                            st.warning("⚠️ Please set both hour and minute to schedule the task")
                                 
                 except Exception as e:
                     st.error(f"Error processing file: {str(e)}")
@@ -377,64 +395,18 @@ def main():
                 
                 # Add Cancel buttons for each task
                 for idx, task in tasks_df.iterrows():
-                    if st.button(f"Cancel Task {task['id']}", key=f"cancel_{task['id']}"):
+                    task_id = task['id']
+                    if st.button(f"Cancel Task {task_id}"):
                         try:
                             loop = asyncio.new_event_loop()
                             asyncio.set_event_loop(loop)
-                            loop.run_until_complete(scheduler.cancel_task(task['id']))
-                            st.success(f"Task {task['id']} cancelled successfully")
+                            loop.run_until_complete(scheduler.cancel_task(task_id))
+                            st.success(f"Task {task_id} cancelled successfully")
                             st.rerun()
                         except Exception as e:
                             st.error(f"Error cancelling task: {str(e)}")
             else:
-                st.info("No scheduled tasks found")
-
-        # Processed Documents tab
-        with tab5:
-            st.header("Processed Documents")
-            
-            # Date filter
-            st.session_state.date_filter = st.selectbox(
-                "Filter by Date",
-                ['all', 'today', 'this_week', 'this_month'],
-                help="Filter processed documents by date range"
-            )
-            
-            # Get filtered tasks and display
-            date_filters = {
-                'today': datetime.now().date(),
-                'this_week': datetime.now().date() - timedelta(days=7),
-                'this_month': datetime.now().date() - timedelta(days=30)
-            }
-            
-            start_date = None
-            if st.session_state.date_filter in date_filters:
-                start_date = date_filters[st.session_state.date_filter]
-            
-            # Initialize scheduler and get task history
-            scheduler = TaskScheduler()
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            tasks = loop.run_until_complete(scheduler.get_scheduled_tasks())
-            
-            if tasks:
-                all_history = []
-                for task in tasks:
-                    history = loop.run_until_complete(
-                        scheduler.get_task_history(
-                            task['id'],
-                            start_date.strftime('%Y-%m-%d') if start_date else None
-                        )
-                    )
-                    all_history.extend(history)
-                
-                if all_history:
-                    history_df = pd.DataFrame(all_history)
-                    st.dataframe(history_df, use_container_width=True)
-                else:
-                    st.info("No processing history found for the selected date range")
-            else:
-                st.info("No processed documents found")
+                st.info("No active scheduled tasks")
 
 if __name__ == "__main__":
     main()
