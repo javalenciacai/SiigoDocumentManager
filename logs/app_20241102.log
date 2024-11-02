@@ -505,3 +505,8 @@
 2024-11-02 03:23:46,502 - siigo_journal_processor - INFO - Successfully fetched cost centers
 2024-11-02 03:23:47,662 - siigo_journal_processor - INFO - Successfully fetched document types
 2024-11-02 03:23:47,664 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 03:27:19,037 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 03:27:19,801 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 03:27:20,589 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 03:27:20,591 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 03:27:20,592 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
