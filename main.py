@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, time
+import time as time_module
 from utils.excel_processor import ExcelProcessor
 from utils.api_client import SiigoAPI
 from utils.scheduler import TaskScheduler
@@ -88,13 +89,24 @@ def main():
         layout="wide"
     )
     
-    # Authentication check
+    # Authentication check and login form
     if not st.session_state.authenticated:
-        st.title("🔐 Authentication Required")
-        if authenticate():
-            st.success("Successfully authenticated!")
-            st.rerun()
-        return
+        st.title("🔐 Login to Siigo API")
+        username = st.text_input("Username")
+        access_key = st.text_input("Access Key", type="password")
+        
+        if st.button("Login"):
+            os.environ['SIIGO_USERNAME'] = username
+            os.environ['SIIGO_ACCESS_KEY'] = access_key
+            
+            if authenticate():
+                st.success("✅ Authentication successful!")
+                st.info(f"Connected to company: {st.session_state.api_client.company_name}")
+                time_module.sleep(2)
+                st.rerun()
+            else:
+                st.error("❌ Authentication failed. Please check your credentials.")
+        st.stop()  # Don't show rest of UI until authenticated
         
     # Main interface
     st.title(f"📊 Siigo Journal Entry Processor")
@@ -170,8 +182,8 @@ def main():
                             "Day of Week",
                             range(7),
                             format_func=lambda x: ['Monday', 'Tuesday', 'Wednesday',
-                                                'Thursday', 'Friday', 'Saturday',
-                                                'Sunday'][x]
+                                               'Thursday', 'Friday', 'Saturday',
+                                               'Sunday'][x]
                         )
                     elif frequency == 'monthly':
                         schedule_params['day_of_month'] = st.selectbox(
