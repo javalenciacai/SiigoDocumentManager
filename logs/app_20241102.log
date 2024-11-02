@@ -1182,3 +1182,17 @@
 2024-11-02 12:40:39,995 - siigo_journal_processor - INFO - Database initialized successfully
 2024-11-02 12:40:39,997 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 12:40:41,673 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 12:40:53,443 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 12:43:17,522 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 12:43:17,948 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 12:43:18,535 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 12:44:27,380 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 12:44:27,388 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 12:44:29,219 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 12:44:29,225 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 12:44:31,290 - siigo_journal_processor - INFO - Successfully created journal entry for date 2021-05-16
+2024-11-02 12:44:45,053 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 12:44:45,060 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 12:44:45,139 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-03 09:00:00 with frequency daily
+2024-11-02 12:45:12,811 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 12:45:12,819 - siigo_journal_processor - INFO - Template validation completed successfully
