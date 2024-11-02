@@ -1073,3 +1073,27 @@
 }
 2024-11-02 04:52:53,853 - siigo_journal_processor - ERROR - processing_errors: Error scheduling task: Error scheduling task: table scheduled_tasks has no column named company_name
 2024-11-02 04:54:13,702 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 04:56:09,579 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 04:56:21,474 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:56:21,484 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:56:27,238 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:56:27,246 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:56:27,765 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:56:27,772 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:56:29,182 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:56:29,199 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:56:29,211 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:56:29,297 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-03 01:01:00 with frequency daily
+2024-11-02 04:56:41,024 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:56:41,033 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:56:41,043 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:56:41,050 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:56:48,661 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:56:48,669 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:56:48,676 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:56:48,797 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-03 01:01:00 with frequency daily
+2024-11-02 04:56:52,108 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:56:52,117 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:56:52,127 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:56:52,134 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:56:52,139 - siigo_journal_processor - INFO - Task scheduler initialized
