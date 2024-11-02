@@ -1097,3 +1097,60 @@
 2024-11-02 04:56:52,127 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 04:56:52,134 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 04:56:52,139 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 05:01:04,732 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 05:01:04,735 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 05:01:05,376 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 05:01:08,616 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 05:01:09,183 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 12:31:57,709 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-02 12:31:57,721 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-02 12:31:57,721 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD"
+  ]
+}
+2024-11-02 12:31:57,721 - siigo_journal_processor - ERROR - validation_errors: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-02 12:31:57,722 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-02 12:31:57,722 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-02 12:31:57,722 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-02 12:31:57,733 - siigo_journal_processor - INFO - Successfully read Excel file with 1 rows
+2024-11-02 12:31:57,733 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-02 12:31:57,733 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations"
+  ]
+}
+2024-11-02 12:31:57,734 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-02 12:31:57,734 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-02 12:31:57,734 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-02 12:31:57,734 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-02 12:31:57,747 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-02 12:31:57,753 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-02 12:31:57,754 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)"
+  ]
+}
+2024-11-02 12:31:57,754 - siigo_journal_processor - ERROR - validation_errors: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-02 12:31:57,754 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-02 12:31:57,754 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-02 12:31:57,754 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-02 12:31:57,767 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-02 12:31:57,773 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 12:32:07,795 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 12:32:07,797 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 12:32:08,324 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 12:32:13,433 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 12:32:13,962 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
