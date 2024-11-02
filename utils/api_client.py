@@ -2,7 +2,7 @@ import requests
 import os
 from datetime import datetime
 from utils.logger import error_logger
-from jwt import decode  # Changed import to use decode directly
+import jwt
 
 class SiigoAPI:
     def __init__(self, username, access_key):
@@ -13,33 +13,14 @@ class SiigoAPI:
         self.company_name = None
         
     def _extract_company_name(self, token):
+        """Extract company name from JWT token"""
         try:
-            # Use decode function directly
-            decoded = decode(
-                token,
-                key=None,
-                algorithms=["HS256"],
-                options={"verify_signature": False}
-            )
-            
-            # Get the company name from the decoded token
-            company_name = decoded.get('cloud_tenant_company_key')
-            if not company_name:
-                company_name = decoded.get('company_name')
-            if not company_name:
-                error_logger.log_error(
-                    'authentication_errors',
-                    "Company name not found in token",
-                    {'token_claims': list(decoded.keys())}
-                )
-                return 'Unknown Company'
-            error_logger.log_info(f"Successfully extracted company name: {company_name}")
-            return company_name
+            decoded = jwt.decode(token, options={"verify_signature": False})
+            return decoded.get('cloud_tenant_company_key', 'Unknown Company')
         except Exception as e:
             error_logger.log_error(
                 'authentication_errors',
-                f"Error decoding JWT token: {str(e)}",
-                {'error_type': str(type(e))}
+                f"Error decoding JWT token: {str(e)}"
             )
             return 'Unknown Company'
 
@@ -179,7 +160,7 @@ class SiigoAPI:
             response = requests.get(
                 f"{self.base_url}/v1/document-types",
                 headers=headers,
-                params={"type": "CC"}  # Filter for journal vouchers
+                params={"type": "FV"}  # Filter for journal vouchers
             )
             response.raise_for_status()
             result = response.json()
