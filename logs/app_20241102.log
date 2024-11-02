@@ -480,3 +480,28 @@
   "username": "siigonubejuan@gmail.com"
 }
 2024-11-02 03:21:57,937 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 03:23:13,474 - siigo_journal_processor - ERROR - authentication_errors: 400 Client Error: Bad Request for url: https://api.siigo.com/auth
+2024-11-02 03:23:13,474 - siigo_journal_processor - DEBUG - Error details: {
+  "username": "siigonubejuan@gmail.com",
+  "status_code": 400,
+  "error_details": {
+    "status": 400,
+    "errors": [
+      {
+        "code": "invalid_value",
+        "message": "Invalid value: access_key",
+        "params": [],
+        "detail": "invalid_value"
+      }
+    ]
+  }
+}
+2024-11-02 03:23:13,476 - siigo_journal_processor - ERROR - authentication_errors: Authentication failed for user siigonubejuan@gmail.com
+2024-11-02 03:23:22,858 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 03:23:23,774 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 03:23:24,492 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 03:23:24,494 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 03:23:24,494 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 03:23:46,502 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 03:23:47,662 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 03:23:47,664 - siigo_journal_processor - INFO - Successfully fetched catalogs
