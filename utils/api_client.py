@@ -8,7 +8,7 @@ class SiigoAPI:
     def __init__(self, username, access_key):
         self.username = username
         self.access_key = access_key
-        self.base_url = os.getenv('SIIGO_API_URL')
+        self.base_url = os.getenv('SIIGO_API_URL', 'https://api.siigo.com')  # Add default URL
         self.token = None
         self.company_name = None
         
