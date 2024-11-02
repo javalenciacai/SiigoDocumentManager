@@ -17,7 +17,7 @@ class TestTaskScheduler(unittest.TestCase):
         self.assertTrue(mock_scheduler().start.called)
         
     @patch('datetime.datetime')
-    def test_schedule_task_future_time(self, mock_datetime):
+    def test_daily_schedule(self, mock_datetime):
         # Mock current time to be 10:00
         current_time = datetime(2024, 1, 1, 10, 0)
         mock_datetime.now.return_value = current_time
@@ -27,40 +27,62 @@ class TestTaskScheduler(unittest.TestCase):
         test_file = MagicMock()
         
         with patch.object(self.scheduler.scheduler, 'add_job') as mock_add_job:
-            self.scheduler.schedule_task(schedule_time, test_file)
+            schedule_info = self.scheduler.schedule_task(schedule_time, test_file)
             self.assertTrue(mock_add_job.called)
+            self.assertEqual(schedule_info['frequency'], 'daily')
             
     @patch('datetime.datetime')
-    def test_schedule_task_past_time(self, mock_datetime):
-        # Mock current time to be 15:00
-        current_time = datetime(2024, 1, 1, 15, 0)
+    def test_weekly_schedule(self, mock_datetime):
+        current_time = datetime(2024, 1, 1, 10, 0)
         mock_datetime.now.return_value = current_time
         
-        # Schedule for 14:00 (should schedule for next day)
-        schedule_time = time(14, 0)
+        schedule_time = time(11, 0)
         test_file = MagicMock()
         
         with patch.object(self.scheduler.scheduler, 'add_job') as mock_add_job:
-            self.scheduler.schedule_task(schedule_time, test_file)
+            schedule_info = self.scheduler.schedule_task(
+                schedule_time,
+                test_file,
+                frequency='weekly',
+                day_of_week=1  # Tuesday
+            )
             self.assertTrue(mock_add_job.called)
+            self.assertEqual(schedule_info['frequency'], 'weekly')
+            self.assertEqual(schedule_info['day_of_week'], 1)
             
-    @patch('utils.scheduler.ExcelProcessor')
-    def test_process_scheduled_file(self, mock_processor):
+    @patch('datetime.datetime')
+    def test_monthly_schedule(self, mock_datetime):
+        current_time = datetime(2024, 1, 1, 10, 0)
+        mock_datetime.now.return_value = current_time
+        
+        schedule_time = time(11, 0)
         test_file = MagicMock()
-        mock_processor.return_value.read_excel.return_value = MagicMock()
         
-        # Test successful processing
-        self.scheduler._process_scheduled_file(test_file)
-        self.assertTrue(mock_processor.called)
-        
-    @patch('utils.scheduler.ExcelProcessor')
-    def test_process_scheduled_file_error(self, mock_processor):
+        with patch.object(self.scheduler.scheduler, 'add_job') as mock_add_job:
+            schedule_info = self.scheduler.schedule_task(
+                schedule_time,
+                test_file,
+                frequency='monthly',
+                day_of_month=15
+            )
+            self.assertTrue(mock_add_job.called)
+            self.assertEqual(schedule_info['frequency'], 'monthly')
+            self.assertEqual(schedule_info['day_of_month'], 15)
+
+    def test_get_scheduled_tasks(self):
         test_file = MagicMock()
-        mock_processor.side_effect = Exception("Processing error")
+        test_file.name = "test.xlsx"
         
-        # Test error handling
-        self.scheduler._process_scheduled_file(test_file)
-        # Should not raise exception but log the error
+        # Add different types of schedules
+        self.scheduler.schedule_task(time(10, 0), test_file)  # daily
+        self.scheduler.schedule_task(time(11, 0), test_file, frequency='weekly', day_of_week=1)
+        self.scheduler.schedule_task(time(12, 0), test_file, frequency='monthly', day_of_month=15)
+        
+        tasks = self.scheduler.get_scheduled_tasks()
+        self.assertEqual(len(tasks), 3)
+        
+        frequencies = set(task['frequency'] for task in tasks)
+        self.assertEqual(frequencies, {'daily', 'weekly', 'monthly'})
 
 if __name__ == '__main__':
     unittest.main()

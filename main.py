@@ -105,7 +105,7 @@ def main():
                     if api_client.authenticate():
                         st.session_state.authenticated = True
                         st.session_state.api_client = api_client
-                        fetch_catalogs()  # Fetch catalogs after authentication
+                        fetch_catalogs()
                         error_logger.log_info(f"User {username} authenticated successfully")
                         st.success("Authentication successful!")
                         st.rerun()
@@ -123,7 +123,6 @@ def main():
                     )
                     st.error(f"Authentication error: {str(e)}")
     else:
-        # Add tabs for different sections
         tab1, tab2, tab3, tab4 = st.tabs([
             "Journal Entry Processing",
             "Catalog Lookup",
@@ -135,7 +134,6 @@ def main():
         with tab2:
             st.header("Catalog Lookup")
             
-            # Refresh button for catalogs
             if st.button("Refresh Catalogs"):
                 fetch_catalogs()
 
@@ -146,7 +144,6 @@ def main():
                 if st.session_state.cost_centers:
                     cost_centers_df = pd.DataFrame(st.session_state.cost_centers)
                     if not cost_centers_df.empty:
-                        # Add search box for cost centers
                         search_cost = st.text_input("Search Cost Centers", key="cost_search")
                         filtered_cost = cost_centers_df
                         if search_cost:
@@ -164,7 +161,6 @@ def main():
                 if st.session_state.document_types:
                     doc_types_df = pd.DataFrame(st.session_state.document_types)
                     if not doc_types_df.empty:
-                        # Add search box for document types
                         search_doc = st.text_input("Search Document Types", key="doc_search")
                         filtered_doc = doc_types_df
                         if search_doc:
@@ -179,7 +175,6 @@ def main():
 
         # Journal Entry Processing Tab
         with tab1:
-            # File upload section
             st.header("Upload New Batch")
             uploaded_file = st.file_uploader("Upload Excel file", type=['xlsx', 'xls'])
             
@@ -211,22 +206,65 @@ def main():
             st.header("Schedule Processing")
             with st.form("scheduler_form"):
                 schedule_time = st.time_input("Select processing time")
+                frequency = st.selectbox(
+                    "Select frequency",
+                    options=['daily', 'weekly', 'monthly'],
+                    help="How often to process the journal entries"
+                )
+                
+                day_of_week = None
+                day_of_month = None
+                
+                if frequency == 'weekly':
+                    day_of_week = st.selectbox(
+                        "Select day of week",
+                        options=list(range(7)),
+                        format_func=lambda x: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][x],
+                        help="Day of the week to process entries"
+                    )
+                elif frequency == 'monthly':
+                    day_of_month = st.number_input(
+                        "Select day of month",
+                        min_value=1,
+                        max_value=31,
+                        value=1,
+                        help="Day of the month to process entries"
+                    )
+                
                 schedule_file = st.file_uploader("Upload Excel file for scheduling", type=['xlsx', 'xls'])
                 schedule_submit = st.form_submit_button("Schedule Processing")
                 
                 if schedule_submit and schedule_file:
                     try:
                         scheduler = TaskScheduler()
-                        scheduler.schedule_task(schedule_time, schedule_file)
-                        error_logger.log_info(
-                            f"Processing scheduled for {schedule_time} with file {schedule_file.name}"
+                        schedule_info = scheduler.schedule_task(
+                            schedule_time,
+                            schedule_file,
+                            frequency=frequency,
+                            day_of_week=day_of_week,
+                            day_of_month=day_of_month
                         )
-                        st.success(f"Processing scheduled for {schedule_time}")
+                        
+                        frequency_text = f"{frequency} at {schedule_time}"
+                        if frequency == 'weekly':
+                            days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                            frequency_text = f"{frequency} on {days[day_of_week]} at {schedule_time}"
+                        elif frequency == 'monthly':
+                            frequency_text = f"{frequency} on day {day_of_month} at {schedule_time}"
+                            
+                        error_logger.log_info(
+                            f"Processing scheduled {frequency_text} with file {schedule_file.name}"
+                        )
+                        st.success(f"Processing scheduled {frequency_text}")
                     except Exception as e:
                         error_logger.log_error(
                             'processing_errors',
                             str(e),
-                            {'schedule_time': str(schedule_time), 'filename': schedule_file.name}
+                            {
+                                'schedule_time': str(schedule_time),
+                                'frequency': frequency,
+                                'filename': schedule_file.name
+                            }
                         )
                         st.error(f"Error scheduling task: {str(e)}")
 
@@ -273,7 +311,6 @@ def main():
         with tab4:
             st.header("Batch Processing Status")
             
-            # Processing Statistics
             col1, col2, col3 = st.columns(3)
             with col1:
                 total_entries = sum(1 for result in st.session_state.processing_results 
@@ -287,7 +324,6 @@ def main():
                 pending_tasks = len([task for task in TaskScheduler().scheduler.get_jobs()])
                 st.metric("Pending Tasks", pending_tasks)
 
-            # Current Batch Status
             if st.session_state.current_batch:
                 st.subheader("Current Batch Progress")
                 progress_bar = st.progress(0)
@@ -300,14 +336,12 @@ def main():
                 progress_bar.progress(progress)
                 status_text.text(f"Processing: {completed}/{total} entries")
 
-            # Recent Processing History
             st.subheader("Recent Processing History")
             if st.session_state.processing_results:
                 history_df = pd.DataFrame(st.session_state.processing_results)
                 history_df['date'] = pd.to_datetime(history_df['date'])
                 history_df = history_df.sort_values('date', ascending=False)
                 
-                # Apply color coding based on status
                 def color_status(status):
                     return ['background-color: #ff4b4b' if x == 'Error' 
                             else 'background-color: #00cc00' for x in status]
@@ -318,21 +352,24 @@ def main():
             else:
                 st.info("No processing history available")
 
-            # Scheduled Tasks
             st.subheader("Scheduled Tasks")
             scheduler = TaskScheduler()
-            jobs = scheduler.scheduler.get_jobs()
+            tasks = scheduler.get_scheduled_tasks()
             
-            if jobs:
-                job_data = []
-                for job in jobs:
-                    next_run = job.next_run_time.strftime("%Y-%m-%d %H:%M:%S")
-                    job_data.append({
-                        "Next Run": next_run,
-                        "File": getattr(job.args[0], 'name', 'Unknown'),
-                        "Status": "Pending"
+            if tasks:
+                task_data = []
+                for task in tasks:
+                    task_data.append({
+                        "Next Run": task['next_run'],
+                        "File": task['file'],
+                        "Frequency": task['frequency'].title(),
+                        "Details": (f"Weekly on {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][task['day_of_week']]}" 
+                                  if task.get('day_of_week') is not None 
+                                  else f"Monthly on day {task['day_of_month']}"
+                                  if task.get('day_of_month') is not None
+                                  else "Daily")
                     })
-                st.dataframe(pd.DataFrame(job_data), use_container_width=True)
+                st.dataframe(pd.DataFrame(task_data), use_container_width=True)
             else:
                 st.info("No scheduled tasks")
 
@@ -350,7 +387,6 @@ def process_entries(df):
     results = []
     processor = ExcelProcessor(None)
     
-    # Convert date column to datetime if it's not already
     try:
         df['date'] = pd.to_datetime(df['date'])
     except Exception as e:
@@ -360,7 +396,6 @@ def process_entries(df):
         )
         raise ValueError(f"Error processing dates: {str(e)}")
     
-    # Group entries by date to create journal entries
     for idx, (date, group) in enumerate(df.groupby('date')):
         try:
             payload = processor.format_entries_for_api(group)
@@ -397,16 +432,13 @@ def display_results(results):
     st.metric("Successful Entries", success_count)
     st.metric("Failed Entries", error_count)
     
-    # Create a more detailed results DataFrame
     detailed_results = []
     for result in results:
         result_copy = result.copy()
         if result['status'] == 'Error' and st.session_state.show_error_details:
-            # Extract error details from the error message
             if 'Details:' in result['message']:
                 error_msg, error_details = result['message'].split('Details:', 1)
                 try:
-                    # Try to parse error details as JSON
                     error_details = json.loads(error_details.strip())
                     result_copy['error_details'] = json.dumps(error_details, indent=2)
                 except:
@@ -417,7 +449,6 @@ def display_results(results):
     
     df_results = pd.DataFrame(detailed_results)
     
-    # Display different columns based on show_error_details
     if st.session_state.show_error_details:
         columns_to_display = ['date', 'status', 'message', 'error_details']
     else:
@@ -425,7 +456,6 @@ def display_results(results):
     
     st.dataframe(df_results[columns_to_display], use_container_width=True)
     
-    # Log overall results
     error_logger.log_info(
         f"Processing completed: {success_count} successful, {error_count} failed"
     )

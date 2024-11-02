@@ -345,3 +345,28 @@
 2024-11-02 02:25:23,392 - siigo_journal_processor - INFO - Processing completed: 0 successful, 4 failed
 2024-11-02 02:25:23,397 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 02:25:23,472 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:27:22,564 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 02:27:23,269 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 02:27:23,886 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 02:27:23,888 - siigo_journal_processor - INFO - Successfully fetched catalog data
+2024-11-02 02:27:23,889 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 02:27:23,990 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:27:23,994 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:27:33,783 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 02:27:33,791 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 02:27:33,800 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:27:33,802 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:27:35,416 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 02:27:35,431 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 02:27:38,034 - siigo_journal_processor - INFO - Successfully created journal entry for date 2021-05-16
+2024-11-02 02:27:38,036 - siigo_journal_processor - INFO - Successfully processed entries for date 2021-05-16
+2024-11-02 02:27:38,040 - siigo_journal_processor - INFO - Processing completed: 1 successful, 0 failed
+2024-11-02 02:27:38,045 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:27:38,053 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:28:14,894 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 02:28:14,906 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 02:28:14,922 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:28:14,929 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-03 00:00:00
+2024-11-02 02:28:14,929 - siigo_journal_processor - INFO - Processing scheduled for 00:00:00 with file example3.xlsx
+2024-11-02 02:28:14,936 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:28:14,943 - siigo_journal_processor - INFO - Task scheduler initialized
