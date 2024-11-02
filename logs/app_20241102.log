@@ -473,3 +473,4 @@
 2024-11-02 03:01:52,965 - siigo_journal_processor - INFO - Template validation completed successfully
 2024-11-02 03:01:53,893 - siigo_journal_processor - INFO - Successfully created journal entry for date 2021-05-16
 2024-11-02 03:01:53,917 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:10:04,470 - siigo_journal_processor - INFO - Database initialized successfully
