@@ -2,7 +2,7 @@ import requests
 import os
 from datetime import datetime
 from utils.logger import error_logger
-import jwt as pyjwt  # Changed to use alias
+from jwt import decode as jwt_decode  # Changed import
 
 class SiigoAPI:
     def __init__(self, username, access_key):
@@ -14,9 +14,9 @@ class SiigoAPI:
         
     def _extract_company_name(self, token):
         try:
-            # Use pyjwt instead of jwt
-            decoded = pyjwt.decode(
-                token,
+            # Use explicit jwt_decode function
+            decoded = jwt_decode(
+                jwt=token,
                 key=None,
                 algorithms=["HS256"],
                 options={"verify_signature": False}
@@ -39,7 +39,7 @@ class SiigoAPI:
             error_logger.log_error(
                 'authentication_errors',
                 f"Error decoding JWT token: {str(e)}",
-                {'token_length': len(token) if token else 0}
+                {'error_type': str(type(e))}  # Add error type for debugging
             )
             return 'Unknown Company'
 
