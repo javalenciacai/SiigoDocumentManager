@@ -1,0 +1,175 @@
+2024-11-02 01:52:48,883 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 01:52:48,886 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 01:52:48,931 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:52:48,933 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:52:52,616 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:52:52,618 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:52:55,750 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:52:55,752 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:52:58,260 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:52:58,262 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:53:02,536 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:53:02,538 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:53:02,693 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 01:53:02,703 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 01:53:04,222 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:53:04,225 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 01:53:04,238 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 01:53:04,246 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 01:53:06,160 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-02 01:53:06,160 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "error_details": {
+    "Status": 400,
+    "Errors": [
+      {
+        "Code": "invalid_reference",
+        "Message": "The cost_center doesn't exist: 1",
+        "Params": [
+          "items[0].cost_center"
+        ],
+        "Detail": "Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/invalid_reference"
+      }
+    ]
+  },
+  "request_payload": {
+    "document": {
+      "id": 9803
+    },
+    "date": "2021-05-16",
+    "items": [
+      {
+        "account": {
+          "code": "11050501",
+          "movement": "Debit"
+        },
+        "customer": {
+          "identification": "1023005372",
+          "branch_office": 0
+        },
+        "description": "Descripci\u00f3n D\u00e9bito",
+        "cost_center": 1,
+        "value": 119000.0
+      }
+    ],
+    "observations": "Observaciones"
+  }
+}
+2024-11-02 01:53:06,850 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-02 01:53:06,851 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "error_details": {
+    "Status": 400,
+    "Errors": [
+      {
+        "Code": "invalid_reference",
+        "Message": "The cost_center doesn't exist: 1",
+        "Params": [
+          "items[0].cost_center"
+        ],
+        "Detail": "Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/invalid_reference"
+      }
+    ]
+  },
+  "request_payload": {
+    "document": {
+      "id": 9803
+    },
+    "date": "2021-05-17",
+    "items": [
+      {
+        "account": {
+          "code": "11100501",
+          "movement": "Credit"
+        },
+        "customer": {
+          "identification": "1023005372",
+          "branch_office": 0
+        },
+        "description": "Descripci\u00f3n Cr\u00e9dito",
+        "cost_center": 1,
+        "value": 119000.0
+      }
+    ],
+    "observations": "Observaciones"
+  }
+}
+2024-11-02 01:53:07,623 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-02 01:53:07,624 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "error_details": {
+    "Status": 400,
+    "Errors": [
+      {
+        "Code": "invalid_reference",
+        "Message": "The cost_center doesn't exist: 1",
+        "Params": [
+          "items[0].cost_center"
+        ],
+        "Detail": "Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/invalid_reference"
+      }
+    ]
+  },
+  "request_payload": {
+    "document": {
+      "id": 9803
+    },
+    "date": "2021-05-18",
+    "items": [
+      {
+        "account": {
+          "code": "11050501",
+          "movement": "Debit"
+        },
+        "customer": {
+          "identification": "1023005372",
+          "branch_office": 0
+        },
+        "description": "Descripci\u00f3n D\u00e9bito",
+        "cost_center": 1,
+        "value": 119000.0
+      }
+    ],
+    "observations": "Observaciones"
+  }
+}
+2024-11-02 01:53:08,237 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-02 01:53:08,238 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "error_details": {
+    "Status": 400,
+    "Errors": [
+      {
+        "Code": "invalid_reference",
+        "Message": "The cost_center doesn't exist: 1",
+        "Params": [
+          "items[0].cost_center"
+        ],
+        "Detail": "Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/invalid_reference"
+      }
+    ]
+  },
+  "request_payload": {
+    "document": {
+      "id": 9803
+    },
+    "date": "2021-05-19",
+    "items": [
+      {
+        "account": {
+          "code": "11100501",
+          "movement": "Credit"
+        },
+        "customer": {
+          "identification": "1023005372",
+          "branch_office": 0
+        },
+        "description": "Descripci\u00f3n Cr\u00e9dito",
+        "cost_center": 1,
+        "value": 119000.0
+      }
+    ],
+    "observations": "Observaciones"
+  }
+}
+2024-11-02 01:53:08,245 - siigo_journal_processor - INFO - Processing completed: 0 successful, 4 failed
