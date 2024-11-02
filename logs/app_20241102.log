@@ -995,3 +995,23 @@
   "status_code": null,
   "error_details": null
 }
+2024-11-02 04:40:54,165 - siigo_journal_processor - ERROR - authentication_errors: Invalid URL 'None/auth': No scheme supplied. Perhaps you meant https://None/auth?
+2024-11-02 04:40:54,166 - siigo_journal_processor - DEBUG - Error details: {
+  "username": "siigonubejuan@gmail.com",
+  "status_code": null,
+  "error_details": null
+}
+2024-11-02 04:41:36,621 - siigo_journal_processor - ERROR - authentication_errors: Invalid URL 'None/auth': No scheme supplied. Perhaps you meant https://None/auth?
+2024-11-02 04:41:36,622 - siigo_journal_processor - DEBUG - Error details: {
+  "username": "siigonubejuan@gmail.com",
+  "status_code": null,
+  "error_details": null
+}
+2024-11-02 04:41:43,530 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 04:41:43,752 - siigo_journal_processor - ERROR - authentication_errors: Invalid URL 'None/auth': No scheme supplied. Perhaps you meant https://None/auth?
+2024-11-02 04:41:43,753 - siigo_journal_processor - DEBUG - Error details: {
+  "username": "siigonubejuan@gmail.com",
+  "status_code": null,
+  "error_details": null
+}
+2024-11-02 04:44:14,386 - siigo_journal_processor - INFO - Database initialized successfully

@@ -120,19 +120,44 @@ def authenticate():
         )
     return False
 
+async def load_scheduled_tasks():
+    scheduler = TaskScheduler()
+    return await scheduler.get_tasks()
+
+async def load_task_history(task_id):
+    scheduler = TaskScheduler()
+    return await scheduler.get_task_history(task_id)
+
+async def cancel_scheduled_task(task_id):
+    scheduler = TaskScheduler()
+    return await scheduler.cancel_task(task_id)
+
+def schedule_processing(file, time, frequency, params):
+    scheduler = TaskScheduler()
+    scheduler.schedule_task(file, time, frequency, params)
+
 # Main application layout
 st.title("Siigo Document Manager")
 
 # Authentication check
 if not st.session_state.authenticated:
-    if authenticate():
-        st.success("✅ Authentication successful!")
-        st.info(f"Connected to company: {st.session_state.company_name}")
-        time.sleep(2)
-        st.rerun()
-    else:
-        st.error("❌ Authentication failed. Please check your credentials.")
-        st.stop()
+    st.markdown("### Login")
+    username = st.text_input("Username")
+    access_key = st.text_input("Access Key", type="password")
+    
+    if st.button("Login"):
+        # Set environment variables
+        os.environ['SIIGO_USERNAME'] = username
+        os.environ['SIIGO_ACCESS_KEY'] = access_key
+        
+        if authenticate():
+            st.success("✅ Authentication successful!")
+            st.info(f"Connected to company: {st.session_state.company_name}")
+            time.sleep(2)
+            st.rerun()
+        else:
+            st.error("❌ Authentication failed. Please check your credentials.")
+    st.stop()
 
 # Sidebar
 with st.sidebar:
