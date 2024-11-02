@@ -30,13 +30,20 @@ class SiigoAPI:
             error_logger.log_info(f"Successfully authenticated user: {self.username}")
             return True
         except requests.exceptions.RequestException as e:
+            error_response = None
+            if hasattr(e, 'response') and e.response is not None:
+                try:
+                    error_response = e.response.json()
+                except:
+                    error_response = e.response.text
+
             error_logger.log_error(
                 'authentication_errors',
                 str(e),
                 {
                     'username': self.username,
                     'status_code': getattr(e.response, 'status_code', None),
-                    'response_text': getattr(e.response, 'text', None)
+                    'error_details': error_response
                 }
             )
             return False
@@ -61,18 +68,11 @@ class SiigoAPI:
             "Partner-Id": "EmpreSAAS"
         }
         
-        # Format the payload according to Siigo API requirements
-        payload = {
-            "document_date": entry_data['date'],
-            "description": "Journal Entry",
-            "entries": entry_data['entries']
-        }
-        
         try:
             response = requests.post(
                 f"{self.base_url}/v1/journals",
                 headers=headers,
-                json=payload
+                json=entry_data
             )
             response.raise_for_status()
             result = response.json()
@@ -81,14 +81,20 @@ class SiigoAPI:
             )
             return result
         except requests.exceptions.RequestException as e:
-            error_msg = f"API error: {str(e)}"
+            error_response = None
+            if hasattr(e, 'response') and e.response is not None:
+                try:
+                    error_response = e.response.json()
+                except:
+                    error_response = e.response.text
+
             error_logger.log_error(
                 'api_errors',
-                error_msg,
+                f"API error: {str(e)}",
                 {
                     'status_code': getattr(e.response, 'status_code', None),
-                    'response_text': getattr(e.response, 'text', None),
-                    'date': entry_data['date']
+                    'error_details': error_response,
+                    'request_payload': entry_data
                 }
             )
-            raise Exception(error_msg)
+            raise Exception(f"API error: {str(e)}\nDetails: {error_response}")

@@ -8,6 +8,7 @@ from utils.logger import error_logger
 import os
 from dotenv import load_dotenv
 import io
+import json
 
 # Load environment variables
 load_dotenv()
@@ -63,6 +64,15 @@ def main():
                 recent_errors = error_logger.get_recent_errors()
                 for error in recent_errors:
                     st.text(error)
+                    
+                # Display last error details from log
+                if recent_errors:
+                    try:
+                        error_text = recent_errors[-1]
+                        if 'error_details' in error_text:
+                            st.json(json.loads(error_text.split('error_details:', 1)[1]))
+                    except:
+                        pass
     
     # Authentication section
     if not st.session_state.authenticated:
@@ -274,34 +284,25 @@ def process_entries(df):
     # Group entries by date to create journal entries
     for idx, (date, group) in enumerate(df.groupby('date')):
         try:
-            entries = processor.format_entries_for_api(group)
+            payload = processor.format_entries_for_api(group)
             
-            # Format date as string in YYYY-MM-DD format for API
-            date_str = date.strftime('%Y-%m-%d')
-            
-            response = st.session_state.api_client.create_journal_entry({
-                'date': date_str,
-                'entries': entries
-            })
+            response = st.session_state.api_client.create_journal_entry(payload)
             
             results.append({
-                'date': date_str,
+                'date': payload['date'],
                 'status': 'Success',
                 'message': response.get('message', 'Entry processed successfully')
             })
             
             if st.session_state.current_batch:
                 st.session_state.current_batch[idx]['processed'] = True
-            error_logger.log_info(f"Successfully processed entries for date {date_str}")
+            error_logger.log_info(f"Successfully processed entries for date {payload['date']}")
             
         except Exception as e:
             error_msg = str(e)
-            error_logger.log_error(
-                'api_errors',
-                error_msg,
-                {'date': date.strftime('%Y-%m-%d') if hasattr(date, 'strftime') else str(date),
-                 'entries_count': len(group)}
-            )
+            if hasattr(e, 'args') and len(e.args) > 0:
+                error_msg = e.args[0]
+            
             results.append({
                 'date': date.strftime('%Y-%m-%d') if hasattr(date, 'strftime') else str(date),
                 'status': 'Error',
@@ -317,8 +318,33 @@ def display_results(results):
     st.metric("Successful Entries", success_count)
     st.metric("Failed Entries", error_count)
     
-    df_results = pd.DataFrame(results)
-    st.dataframe(df_results)
+    # Create a more detailed results DataFrame
+    detailed_results = []
+    for result in results:
+        result_copy = result.copy()
+        if result['status'] == 'Error' and st.session_state.show_error_details:
+            # Extract error details from the error message
+            if 'Details:' in result['message']:
+                error_msg, error_details = result['message'].split('Details:', 1)
+                try:
+                    # Try to parse error details as JSON
+                    error_details = json.loads(error_details.strip())
+                    result_copy['error_details'] = json.dumps(error_details, indent=2)
+                except:
+                    result_copy['error_details'] = error_details.strip()
+            else:
+                result_copy['error_details'] = result['message']
+        detailed_results.append(result_copy)
+    
+    df_results = pd.DataFrame(detailed_results)
+    
+    # Display different columns based on show_error_details
+    if st.session_state.show_error_details:
+        columns_to_display = ['date', 'status', 'message', 'error_details']
+    else:
+        columns_to_display = ['date', 'status', 'message']
+    
+    st.dataframe(df_results[columns_to_display], use_container_width=True)
     
     # Log overall results
     error_logger.log_info(
