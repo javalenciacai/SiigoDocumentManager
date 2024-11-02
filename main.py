@@ -28,6 +28,8 @@ if 'cost_centers' not in st.session_state:
     st.session_state.cost_centers = None
 if 'document_types' not in st.session_state:
     st.session_state.document_types = None
+if 'selected_task' not in st.session_state:
+    st.session_state.selected_task = None
 
 def export_to_excel(data, filename):
     """Export data to Excel file"""
@@ -59,6 +61,40 @@ def fetch_catalogs():
             f"Error fetching catalogs: {str(e)}"
         )
         st.error(f"Error fetching catalogs: {str(e)}")
+
+def get_task_status_color(next_run):
+    """Get status color based on next run time"""
+    try:
+        next_run_dt = datetime.strptime(next_run, "%Y-%m-%d %H:%M:%S")
+        now = datetime.now()
+        if next_run_dt < now:
+            return "🔴 Overdue"
+        elif (next_run_dt - now).total_seconds() < 3600:  # Within next hour
+            return "🟡 Soon"
+        else:
+            return "🟢 Scheduled"
+    except:
+        return "⚪ Unknown"
+
+def format_task_details(task):
+    """Format task details for display"""
+    status = get_task_status_color(task['next_run'])
+    
+    if task['frequency'] == 'weekly':
+        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        schedule = f"Weekly on {days[task['day_of_week']]}"
+    elif task['frequency'] == 'monthly':
+        schedule = f"Monthly on day {task['day_of_month']}"
+    else:
+        schedule = "Daily"
+        
+    return {
+        "Status": status,
+        "Next Run": task['next_run'],
+        "File": task['file'],
+        "Frequency": task['frequency'].title(),
+        "Schedule": schedule
+    }
 
 def main():
     st.title("Siigo Journal Entry Processor")
@@ -309,21 +345,105 @@ def main():
 
         # Processing Status Tab
         with tab4:
-            st.header("Batch Processing Status")
+            st.header("Scheduled Documents")
             
+            # Overview metrics
             col1, col2, col3 = st.columns(3)
+            scheduler = TaskScheduler()
+            tasks = scheduler.get_scheduled_tasks()
+            
             with col1:
-                total_entries = sum(1 for result in st.session_state.processing_results 
-                                if result['status'] == 'Success')
-                st.metric("Total Processed", total_entries)
+                total_tasks = len(tasks)
+                st.metric("Total Scheduled Tasks", total_tasks)
+            
             with col2:
-                success_rate = (total_entries / len(st.session_state.processing_results) * 100 
-                              if st.session_state.processing_results else 0)
-                st.metric("Success Rate", f"{success_rate:.1f}%")
+                active_tasks = sum(1 for task in tasks if get_task_status_color(task['next_run']).startswith('🟢'))
+                st.metric("Active Tasks", active_tasks)
+            
             with col3:
-                pending_tasks = len([task for task in TaskScheduler().scheduler.get_jobs()])
-                st.metric("Pending Tasks", pending_tasks)
-
+                overdue_tasks = sum(1 for task in tasks if get_task_status_color(task['next_run']).startswith('🔴'))
+                st.metric("Overdue Tasks", overdue_tasks)
+            
+            # Task filtering
+            st.subheader("Task Management")
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                status_filter = st.multiselect(
+                    "Filter by Status",
+                    ["🟢 Scheduled", "🟡 Soon", "🔴 Overdue"],
+                    default=["🟢 Scheduled", "🟡 Soon", "🔴 Overdue"]
+                )
+            
+            with col2:
+                frequency_filter = st.multiselect(
+                    "Filter by Frequency",
+                    ["Daily", "Weekly", "Monthly"],
+                    default=["Daily", "Weekly", "Monthly"]
+                )
+            
+            # Display tasks
+            if tasks:
+                formatted_tasks = [format_task_details(task) for task in tasks]
+                tasks_df = pd.DataFrame(formatted_tasks)
+                
+                # Apply filters
+                filtered_df = tasks_df[
+                    tasks_df['Status'].isin(status_filter) &
+                    tasks_df['Frequency'].isin(frequency_filter)
+                ]
+                
+                if not filtered_df.empty:
+                    st.dataframe(
+                        filtered_df.style.apply(
+                            lambda x: ['background-color: #ff4b4b' if '🔴' in str(val)
+                                     else 'background-color: #ffeb3b' if '🟡' in str(val)
+                                     else 'background-color: #4caf50' if '🟢' in str(val)
+                                     else '' for val in x
+                            ],
+                            subset=['Status']
+                        ),
+                        use_container_width=True
+                    )
+                    
+                    # Task details view
+                    st.subheader("Task Details")
+                    selected_task = st.selectbox(
+                        "Select a task to view details",
+                        options=filtered_df.index,
+                        format_func=lambda x: f"{filtered_df.iloc[x]['File']} - {filtered_df.iloc[x]['Next Run']}"
+                    )
+                    
+                    if selected_task is not None:
+                        task = filtered_df.iloc[selected_task]
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            st.markdown("#### Schedule Information")
+                            st.write(f"**Status:** {task['Status']}")
+                            st.write(f"**Next Run:** {task['Next Run']}")
+                            st.write(f"**Frequency:** {task['Frequency']}")
+                            st.write(f"**Schedule:** {task['Schedule']}")
+                        
+                        with col2:
+                            st.markdown("#### File Information")
+                            st.write(f"**Filename:** {task['File']}")
+                            
+                            # Add action buttons
+                            if st.button("Cancel Schedule", key=f"cancel_{selected_task}"):
+                                try:
+                                    scheduler.scheduler.remove_job(str(selected_task))
+                                    st.success("Schedule canceled successfully")
+                                    st.rerun()
+                                except Exception as e:
+                                    st.error(f"Error canceling schedule: {str(e)}")
+                else:
+                    st.info("No tasks match the selected filters")
+            else:
+                st.info("No scheduled tasks available")
+            
+            # Batch Processing Status
+            st.header("Current Processing Status")
             if st.session_state.current_batch:
                 st.subheader("Current Batch Progress")
                 progress_bar = st.progress(0)
@@ -335,8 +455,9 @@ def main():
                 
                 progress_bar.progress(progress)
                 status_text.text(f"Processing: {completed}/{total} entries")
-
-            st.subheader("Recent Processing History")
+            
+            # Processing History
+            st.subheader("Processing History")
             if st.session_state.processing_results:
                 history_df = pd.DataFrame(st.session_state.processing_results)
                 history_df['date'] = pd.to_datetime(history_df['date'])
@@ -351,114 +472,6 @@ def main():
                 st.dataframe(styled_df, use_container_width=True)
             else:
                 st.info("No processing history available")
-
-            st.subheader("Scheduled Tasks")
-            scheduler = TaskScheduler()
-            tasks = scheduler.get_scheduled_tasks()
-            
-            if tasks:
-                task_data = []
-                for task in tasks:
-                    task_data.append({
-                        "Next Run": task['next_run'],
-                        "File": task['file'],
-                        "Frequency": task['frequency'].title(),
-                        "Details": (f"Weekly on {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][task['day_of_week']]}" 
-                                  if task.get('day_of_week') is not None 
-                                  else f"Monthly on day {task['day_of_month']}"
-                                  if task.get('day_of_month') is not None
-                                  else "Daily")
-                    })
-                st.dataframe(pd.DataFrame(task_data), use_container_width=True)
-            else:
-                st.info("No scheduled tasks")
-
-def logout():
-    error_logger.log_info("User logged out")
-    st.session_state.authenticated = False
-    st.session_state.api_client = None
-    st.session_state.processing_results = []
-    st.session_state.current_batch = None
-    st.session_state.cost_centers = None
-    st.session_state.document_types = None
-
-def process_entries(df):
-    """Process journal entries from DataFrame"""
-    results = []
-    processor = ExcelProcessor(None)
-    
-    try:
-        df['date'] = pd.to_datetime(df['date'])
-    except Exception as e:
-        error_logger.log_error(
-            'processing_errors',
-            f"Error converting dates: {str(e)}"
-        )
-        raise ValueError(f"Error processing dates: {str(e)}")
-    
-    for idx, (date, group) in enumerate(df.groupby('date')):
-        try:
-            payload = processor.format_entries_for_api(group)
-            
-            response = st.session_state.api_client.create_journal_entry(payload)
-            
-            results.append({
-                'date': payload['date'],
-                'status': 'Success',
-                'message': response.get('message', 'Entry processed successfully')
-            })
-            
-            if st.session_state.current_batch:
-                st.session_state.current_batch[idx]['processed'] = True
-            error_logger.log_info(f"Successfully processed entries for date {payload['date']}")
-            
-        except Exception as e:
-            error_msg = str(e)
-            if hasattr(e, 'args') and len(e.args) > 0:
-                error_msg = e.args[0]
-            
-            results.append({
-                'date': date.strftime('%Y-%m-%d') if hasattr(date, 'strftime') else str(date),
-                'status': 'Error',
-                'message': error_msg
-            })
-    return results
-
-def display_results(results):
-    success_count = sum(1 for r in results if r['status'] == 'Success')
-    error_count = len(results) - success_count
-    
-    st.subheader("Processing Results")
-    st.metric("Successful Entries", success_count)
-    st.metric("Failed Entries", error_count)
-    
-    detailed_results = []
-    for result in results:
-        result_copy = result.copy()
-        if result['status'] == 'Error' and st.session_state.show_error_details:
-            if 'Details:' in result['message']:
-                error_msg, error_details = result['message'].split('Details:', 1)
-                try:
-                    error_details = json.loads(error_details.strip())
-                    result_copy['error_details'] = json.dumps(error_details, indent=2)
-                except:
-                    result_copy['error_details'] = error_details.strip()
-            else:
-                result_copy['error_details'] = result['message']
-        detailed_results.append(result_copy)
-    
-    df_results = pd.DataFrame(detailed_results)
-    
-    if st.session_state.show_error_details:
-        columns_to_display = ['date', 'status', 'message', 'error_details']
-    else:
-        columns_to_display = ['date', 'status', 'message']
-    
-    st.dataframe(df_results[columns_to_display], use_container_width=True)
-    
-    error_logger.log_info(
-        f"Processing completed: {success_count} successful, {error_count} failed"
-    )
 
 if __name__ == "__main__":
     main()
