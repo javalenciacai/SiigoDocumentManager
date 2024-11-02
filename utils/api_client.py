@@ -2,7 +2,7 @@ import requests
 import os
 from datetime import datetime
 from utils.logger import error_logger
-import jwt
+import jwt as pyjwt  # Changed to use alias
 
 class SiigoAPI:
     def __init__(self, username, access_key):
@@ -14,13 +14,10 @@ class SiigoAPI:
         
     def _extract_company_name(self, token):
         try:
-            # Import PyJWT with the correct method
-            import jwt
-            
-            # Decode the token without verification
-            decoded = jwt.decode(
+            # Use pyjwt instead of jwt
+            decoded = pyjwt.decode(
                 token,
-                key=None,  # No key needed since we're not verifying
+                key=None,
                 algorithms=["HS256"],
                 options={"verify_signature": False}
             )
