@@ -510,3 +510,10 @@
 2024-11-02 03:27:20,589 - siigo_journal_processor - INFO - Successfully fetched document types
 2024-11-02 03:27:20,591 - siigo_journal_processor - INFO - Successfully fetched catalogs
 2024-11-02 03:27:20,592 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 03:28:09,455 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 03:28:17,225 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 03:28:17,705 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 03:28:19,192 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 03:28:19,194 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 03:28:19,195 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 03:30:25,138 - siigo_journal_processor - INFO - Database initialized successfully
