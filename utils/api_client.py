@@ -16,7 +16,7 @@ class SiigoAPI:
         """Extract company name from JWT token"""
         try:
             decoded = jwt.decode(token, options={"verify_signature": False})
-            return decoded.get('company_name', 'Unknown Company')
+            return decoded.get('cloud_tenant_company_key', 'Unknown Company')
         except Exception as e:
             error_logger.log_error(
                 'authentication_errors',
