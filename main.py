@@ -219,10 +219,11 @@ def main():
                             )
                             
                         with col2:
+                            current_time = datetime.now().time()
                             schedule_time = st.time_input(
                                 "Processing Time",
-                                value=datetime.now().replace(hour=9, minute=0).time(),
-                                help="Time of day when processing should occur (default: 9:00 AM)"
+                                value=current_time,
+                                help="Select the time of day when processing should occur"
                             )
                             
                         with col3:
@@ -374,60 +375,66 @@ def main():
                 tasks_df = pd.DataFrame(tasks)
                 st.dataframe(tasks_df, use_container_width=True)
                 
-                # Add Cancel buttons for each task with improved layout
-                for _, task in tasks_df.iterrows():
-                    task_id = task['id']
-                    col1, col2 = st.columns([3, 1])
-                    with col1:
-                        st.warning(f"Task {task_id}: {task['file_name']}")
-                    with col2:
-                        if st.button(f"Cancel Task {task_id}", key=f"cancel_{task_id}"):
-                            try:
-                                loop.run_until_complete(scheduler.cancel_task(task_id))
-                                st.success("✅ Task cancelled successfully!")
-                                st.rerun()  # Refresh the page
-                            except Exception as e:
-                                st.error(f"❌ Error cancelling task: {str(e)}")
-                                error_logger.log_error(
-                                    'processing_errors',
-                                    f"Error cancelling task: {str(e)}",
-                                    {'task_id': task_id}
-                                )
-                
-                # Task details
-                if st.session_state.selected_task:
-                    st.subheader("Task Details")
-                    task = next((t for t in tasks if t['id'] == st.session_state.selected_task), None)
-                    if task:
-                        st.json(task)
+                # Add Cancel buttons for each task
+                for idx, task in tasks_df.iterrows():
+                    if st.button(f"Cancel Task {task['id']}", key=f"cancel_{task['id']}"):
+                        try:
+                            loop = asyncio.new_event_loop()
+                            asyncio.set_event_loop(loop)
+                            loop.run_until_complete(scheduler.cancel_task(task['id']))
+                            st.success(f"Task {task['id']} cancelled successfully")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Error cancelling task: {str(e)}")
             else:
-                st.info("No active scheduled tasks")
+                st.info("No scheduled tasks found")
 
         # Processed Documents tab
         with tab5:
             st.header("Processed Documents")
             
-            # Date filter options
-            filter_options = {
-                'all': 'All Time',
-                'today': 'Today',
-                'week': 'This Week',
-                'month': 'This Month'
-            }
-            selected_filter = st.selectbox(
-                "Date Range",
-                list(filter_options.keys()),
-                format_func=lambda x: filter_options[x]
+            # Date filter
+            st.session_state.date_filter = st.selectbox(
+                "Filter by Date",
+                ['all', 'today', 'this_week', 'this_month'],
+                help="Filter processed documents by date range"
             )
             
-            # Get processed documents based on filter
-            documents = []  # Implement document retrieval based on filter
+            # Get filtered tasks and display
+            date_filters = {
+                'today': datetime.now().date(),
+                'this_week': datetime.now().date() - timedelta(days=7),
+                'this_month': datetime.now().date() - timedelta(days=30)
+            }
             
-            if documents:
-                df = pd.DataFrame(documents)
-                st.dataframe(df, use_container_width=True)
+            start_date = None
+            if st.session_state.date_filter in date_filters:
+                start_date = date_filters[st.session_state.date_filter]
+            
+            # Initialize scheduler and get task history
+            scheduler = TaskScheduler()
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            tasks = loop.run_until_complete(scheduler.get_scheduled_tasks())
+            
+            if tasks:
+                all_history = []
+                for task in tasks:
+                    history = loop.run_until_complete(
+                        scheduler.get_task_history(
+                            task['id'],
+                            start_date.strftime('%Y-%m-%d') if start_date else None
+                        )
+                    )
+                    all_history.extend(history)
+                
+                if all_history:
+                    history_df = pd.DataFrame(all_history)
+                    st.dataframe(history_df, use_container_width=True)
+                else:
+                    st.info("No processing history found for the selected date range")
             else:
-                st.info("No processed documents available")
+                st.info("No processed documents found")
 
 if __name__ == "__main__":
     main()

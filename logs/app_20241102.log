@@ -695,3 +695,4 @@
 2024-11-02 04:02:38,756 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
 2024-11-02 04:02:38,764 - siigo_journal_processor - INFO - Template validation completed successfully
 2024-11-02 04:02:38,780 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:07:41,054 - siigo_journal_processor - INFO - Database initialized successfully
