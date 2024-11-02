@@ -441,3 +441,4 @@
 }
 2024-11-02 02:47:38,032 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
 2024-11-02 02:47:38,039 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 02:54:07,941 - siigo_journal_processor - INFO - Database initialized successfully

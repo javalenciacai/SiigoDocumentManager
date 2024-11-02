@@ -177,5 +177,20 @@ class TaskScheduler:
             )
             raise Exception(f"Error cancelling task: {str(e)}")
 
-# Initialize database
-task_db.init_database()
+def init_scheduler():
+    """Initialize database with error handling"""
+    try:
+        # Initialize database
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(task_db.initialize())
+        error_logger.log_info("Database initialized successfully")
+    except Exception as e:
+        error_logger.log_error(
+            'processing_errors',
+            f"Error initializing database: {str(e)}"
+        )
+        raise
+
+# Initialize scheduler and database
+init_scheduler()
