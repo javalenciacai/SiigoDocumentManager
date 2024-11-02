@@ -1028,3 +1028,31 @@
   "error_details": null
 }
 2024-11-02 04:47:12,627 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 04:48:25,890 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 04:49:15,000 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:49:15,010 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:49:21,567 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:49:21,576 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:49:23,205 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:49:23,215 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:49:25,532 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:49:25,539 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:49:25,546 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:49:25,547 - siigo_journal_processor - ERROR - processing_errors: Error scheduling task: combine() argument 2 must be datetime.time, not UploadedFile
+2024-11-02 04:49:25,548 - siigo_journal_processor - DEBUG - Error details: {
+  "schedule_time": "UploadedFile(file_id='7b7bd99a-b410-4e4e-9170-66f57bc4cdce', name='example3.xlsx', type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size=8963, _file_urls=file_id: \"7b7bd99a-b410-4e4e-9170-66f57bc4cdce\"\nupload_url: \"/_stcore/upload_file/7daf1b2d-faa8-4786-9645-d4c83d235764/7b7bd99a-b410-4e4e-9170-66f57bc4cdce\"\ndelete_url: \"/_stcore/upload_file/7daf1b2d-faa8-4786-9645-d4c83d235764/7b7bd99a-b410-4e4e-9170-66f57bc4cdce\"\n)",
+  "frequency": {}
+}
+2024-11-02 04:49:36,537 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:49:36,545 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:49:37,080 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 04:49:38,515 - siigo_journal_processor - INFO - Successfully created journal entry for date 2021-05-16
+2024-11-02 04:49:41,206 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:49:41,216 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:49:41,224 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:49:41,225 - siigo_journal_processor - ERROR - processing_errors: Error scheduling task: combine() argument 2 must be datetime.time, not UploadedFile
+2024-11-02 04:49:41,225 - siigo_journal_processor - DEBUG - Error details: {
+  "schedule_time": "UploadedFile(file_id='7b7bd99a-b410-4e4e-9170-66f57bc4cdce', name='example3.xlsx', type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size=8963, _file_urls=file_id: \"7b7bd99a-b410-4e4e-9170-66f57bc4cdce\"\nupload_url: \"/_stcore/upload_file/7daf1b2d-faa8-4786-9645-d4c83d235764/7b7bd99a-b410-4e4e-9170-66f57bc4cdce\"\ndelete_url: \"/_stcore/upload_file/7daf1b2d-faa8-4786-9645-d4c83d235764/7b7bd99a-b410-4e4e-9170-66f57bc4cdce\"\n)",
+  "frequency": {}
+}
+2024-11-02 04:51:24,300 - siigo_journal_processor - INFO - Database initialized successfully

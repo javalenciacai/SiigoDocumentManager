@@ -121,20 +121,37 @@ def authenticate():
     return False
 
 async def load_scheduled_tasks():
+    """Load scheduled tasks for current company"""
     scheduler = TaskScheduler()
-    return await scheduler.get_tasks()
+    return await scheduler.get_scheduled_tasks(st.session_state.company_name)
 
 async def load_task_history(task_id):
+    """Load task history for current company"""
     scheduler = TaskScheduler()
-    return await scheduler.get_task_history(task_id)
+    return await scheduler.get_task_history(task_id, st.session_state.company_name)
 
 async def cancel_scheduled_task(task_id):
+    """Cancel task for current company"""
     scheduler = TaskScheduler()
-    return await scheduler.cancel_task(task_id)
+    return await scheduler.cancel_task(task_id, st.session_state.company_name)
 
 def schedule_processing(file, time, frequency, params):
-    scheduler = TaskScheduler()
-    scheduler.schedule_task(file, time, frequency, params)
+    """Schedule task with company isolation"""
+    try:
+        scheduler = TaskScheduler()
+        return scheduler.schedule_task(
+            time=time,  # Pass time first
+            file=file,
+            frequency=frequency,
+            company_name=st.session_state.company_name,
+            **params
+        )
+    except Exception as e:
+        error_logger.log_error(
+            'processing_errors',
+            f"Error scheduling task: {str(e)}"
+        )
+        raise Exception(f"Error scheduling task: {str(e)}")
 
 # Main application layout
 st.title("Siigo Document Manager")
@@ -276,7 +293,12 @@ with tab1:
                     st.info(f"📅 Next scheduled run: {next_run.strftime('%A, %B %d, %Y at %I:%M %p')}")
                     
                     if st.button("Schedule Processing", type="primary"):
-                        schedule_processing(uploaded_file, st.session_state.schedule_time, frequency, schedule_params)
+                        schedule_processing(
+                            file=uploaded_file,
+                            time=st.session_state.schedule_time,
+                            frequency=frequency,
+                            params=schedule_params
+                        )
                 else:
                     st.warning("⚠️ Please set both hour and minute to schedule the task")
                     
