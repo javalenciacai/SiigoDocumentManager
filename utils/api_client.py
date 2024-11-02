@@ -160,7 +160,7 @@ class SiigoAPI:
             response = requests.get(
                 f"{self.base_url}/v1/document-types",
                 headers=headers,
-                params={"type": "FV"}  # Filter for journal vouchers
+                params={"type": "CC"}  # Filter for journal vouchers
             )
             response.raise_for_status()
             result = response.json()
