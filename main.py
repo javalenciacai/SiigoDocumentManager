@@ -67,6 +67,7 @@ def logout():
     st.session_state.api_client = None
     st.session_state.cost_centers = None
     st.session_state.document_types = None
+    st.session_state.company_name = None  # Clear company name on logout
     st.rerun()
 
 def get_next_run_preview(schedule_time, frequency, day_of_week=None, day_of_month=None):
@@ -109,6 +110,8 @@ if 'date_filter' not in st.session_state:
     st.session_state.date_filter = 'all'
 if 'schedule_time' not in st.session_state:
     st.session_state.schedule_time = None
+if 'company_name' not in st.session_state:
+    st.session_state.company_name = None
 
 def main():
     st.title("Siigo Journal Entry Processor")
@@ -117,6 +120,9 @@ def main():
     with st.sidebar:
         if st.session_state.authenticated:
             st.success("Logged in successfully")
+            # Display company name
+            if st.session_state.company_name:
+                st.markdown(f"### 🏢 {st.session_state.company_name}")
             st.button("Logout", on_click=logout)
             st.session_state.show_error_details = st.checkbox("Show Error Details")
             
@@ -153,6 +159,7 @@ def main():
                     if api_client.authenticate():
                         st.session_state.authenticated = True
                         st.session_state.api_client = api_client
+                        st.session_state.company_name = api_client.company_name  # Store company name
                         fetch_catalogs()
                         error_logger.log_info(f"User {username} authenticated successfully")
                         st.success("Authentication successful!")
@@ -407,6 +414,46 @@ def main():
                             st.error(f"Error cancelling task: {str(e)}")
             else:
                 st.info("No active scheduled tasks")
+
+        # Processed Documents tab
+        with tab5:
+            st.header("Processed Documents")
+            
+            # Date filter
+            st.subheader("Filter by Date")
+            date_filter = st.radio(
+                "Date Range",
+                ["all", "today", "this_week", "this_month"],
+                horizontal=True
+            )
+            st.session_state.date_filter = date_filter
+            
+            # Get tasks based on filter
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            if date_filter != "all":
+                now = datetime.now()
+                if date_filter == "today":
+                    start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+                elif date_filter == "this_week":
+                    start_date = now - timedelta(days=now.weekday())
+                else:  # this_month
+                    start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+                
+                tasks = loop.run_until_complete(scheduler.get_task_history(
+                    None,
+                    start_date=start_date.strftime('%Y-%m-%d'),
+                    end_date=now.strftime('%Y-%m-%d')
+                ))
+            else:
+                tasks = loop.run_until_complete(scheduler.get_task_history(None))
+            
+            if tasks:
+                tasks_df = pd.DataFrame(tasks)
+                st.dataframe(tasks_df, use_container_width=True)
+            else:
+                st.info("No processed documents found for the selected period")
 
 if __name__ == "__main__":
     main()

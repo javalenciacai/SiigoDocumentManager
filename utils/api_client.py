@@ -2,6 +2,7 @@ import requests
 import os
 from datetime import datetime
 from utils.logger import error_logger
+import jwt
 
 class SiigoAPI:
     def __init__(self, username, access_key):
@@ -9,7 +10,20 @@ class SiigoAPI:
         self.access_key = access_key
         self.base_url = os.getenv('SIIGO_API_URL')
         self.token = None
+        self.company_name = None
         
+    def _extract_company_name(self, token):
+        """Extract company name from JWT token"""
+        try:
+            decoded = jwt.decode(token, options={"verify_signature": False})
+            return decoded.get('company_name', 'Unknown Company')
+        except Exception as e:
+            error_logger.log_error(
+                'authentication_errors',
+                f"Error decoding JWT token: {str(e)}"
+            )
+            return 'Unknown Company'
+
     def authenticate(self):
         """Authenticate with Siigo API"""
         try:
@@ -27,6 +41,7 @@ class SiigoAPI:
             )
             response.raise_for_status()
             self.token = response.json().get('access_token')
+            self.company_name = self._extract_company_name(self.token)
             error_logger.log_info(f"Successfully authenticated user: {self.username}")
             return True
         except requests.exceptions.RequestException as e:
