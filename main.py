@@ -24,6 +24,10 @@ if 'processing_results' not in st.session_state:
     st.session_state.processing_results = []
 if 'current_batch' not in st.session_state:
     st.session_state.current_batch = None
+if 'cost_centers' not in st.session_state:
+    st.session_state.cost_centers = None
+if 'document_types' not in st.session_state:
+    st.session_state.document_types = None
 
 def export_to_excel(data, filename):
     """Export data to Excel file"""
@@ -41,6 +45,20 @@ def export_to_csv(data, filename):
     df = pd.DataFrame(data)
     df.to_csv(output, index=False)
     return output.getvalue()
+
+def fetch_catalogs():
+    """Fetch catalog data from Siigo API"""
+    try:
+        if st.session_state.authenticated and st.session_state.api_client:
+            st.session_state.cost_centers = st.session_state.api_client.get_cost_centers()
+            st.session_state.document_types = st.session_state.api_client.get_document_types()
+            error_logger.log_info("Successfully fetched catalog data")
+    except Exception as e:
+        error_logger.log_error(
+            'api_errors',
+            f"Error fetching catalogs: {str(e)}"
+        )
+        st.error(f"Error fetching catalogs: {str(e)}")
 
 def main():
     st.title("Siigo Journal Entry Processor")
@@ -87,6 +105,7 @@ def main():
                     if api_client.authenticate():
                         st.session_state.authenticated = True
                         st.session_state.api_client = api_client
+                        fetch_catalogs()  # Fetch catalogs after authentication
                         error_logger.log_info(f"User {username} authenticated successfully")
                         st.success("Authentication successful!")
                         st.rerun()
@@ -104,160 +123,218 @@ def main():
                     )
                     st.error(f"Authentication error: {str(e)}")
     else:
-        # Export Section
-        st.header("Export Processing Results")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            if st.button("Export to Excel"):
-                if st.session_state.processing_results:
-                    output = export_to_excel(
-                        st.session_state.processing_results,
-                        "processing_results.xlsx"
-                    )
-                    st.download_button(
-                        label="Download Excel File",
-                        data=output,
-                        file_name="processing_results.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    )
-                    error_logger.log_info("Processing results exported to Excel")
+        # Add tabs for different sections
+        tab1, tab2, tab3, tab4 = st.tabs([
+            "Journal Entry Processing",
+            "Catalog Lookup",
+            "Export Results",
+            "Processing Status"
+        ])
+
+        # Catalog Lookup Tab
+        with tab2:
+            st.header("Catalog Lookup")
+            
+            # Refresh button for catalogs
+            if st.button("Refresh Catalogs"):
+                fetch_catalogs()
+
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.subheader("Cost Centers")
+                if st.session_state.cost_centers:
+                    cost_centers_df = pd.DataFrame(st.session_state.cost_centers)
+                    if not cost_centers_df.empty:
+                        # Add search box for cost centers
+                        search_cost = st.text_input("Search Cost Centers", key="cost_search")
+                        filtered_cost = cost_centers_df
+                        if search_cost:
+                            filtered_cost = cost_centers_df[
+                                cost_centers_df.apply(lambda x: x.astype(str).str.contains(search_cost, case=False).any(), axis=1)
+                            ]
+                        st.dataframe(filtered_cost, use_container_width=True)
+                    else:
+                        st.info("No cost centers available")
                 else:
-                    st.warning("No processing results available to export")
-        
-        with col2:
-            if st.button("Export to CSV"):
-                if st.session_state.processing_results:
-                    output = export_to_csv(
-                        st.session_state.processing_results,
-                        "processing_results.csv"
-                    )
-                    st.download_button(
-                        label="Download CSV File",
-                        data=output,
-                        file_name="processing_results.csv",
-                        mime="text/csv"
-                    )
-                    error_logger.log_info("Processing results exported to CSV")
+                    st.info("Cost centers not loaded")
+
+            with col2:
+                st.subheader("Document Types")
+                if st.session_state.document_types:
+                    doc_types_df = pd.DataFrame(st.session_state.document_types)
+                    if not doc_types_df.empty:
+                        # Add search box for document types
+                        search_doc = st.text_input("Search Document Types", key="doc_search")
+                        filtered_doc = doc_types_df
+                        if search_doc:
+                            filtered_doc = doc_types_df[
+                                doc_types_df.apply(lambda x: x.astype(str).str.contains(search_doc, case=False).any(), axis=1)
+                            ]
+                        st.dataframe(filtered_doc, use_container_width=True)
+                    else:
+                        st.info("No document types available")
                 else:
-                    st.warning("No processing results available to export")
-        
-        # Batch Processing Status Dashboard
-        st.header("Batch Processing Status")
-        
-        # Processing Statistics
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            total_entries = sum(1 for result in st.session_state.processing_results 
-                              if result['status'] == 'Success')
-            st.metric("Total Processed", total_entries)
-        with col2:
-            success_rate = (total_entries / len(st.session_state.processing_results) * 100 
-                          if st.session_state.processing_results else 0)
-            st.metric("Success Rate", f"{success_rate:.1f}%")
-        with col3:
-            pending_tasks = len([task for task in TaskScheduler().scheduler.get_jobs()])
-            st.metric("Pending Tasks", pending_tasks)
+                    st.info("Document types not loaded")
 
-        # Current Batch Status
-        if st.session_state.current_batch:
-            st.subheader("Current Batch Progress")
-            progress_bar = st.progress(0)
-            status_text = st.empty()
+        # Journal Entry Processing Tab
+        with tab1:
+            # File upload section
+            st.header("Upload New Batch")
+            uploaded_file = st.file_uploader("Upload Excel file", type=['xlsx', 'xls'])
             
-            total = len(st.session_state.current_batch)
-            completed = sum(1 for entry in st.session_state.current_batch if entry.get('processed'))
-            progress = completed / total if total > 0 else 0
-            
-            progress_bar.progress(progress)
-            status_text.text(f"Processing: {completed}/{total} entries")
-
-        # Recent Processing History
-        st.subheader("Recent Processing History")
-        if st.session_state.processing_results:
-            history_df = pd.DataFrame(st.session_state.processing_results)
-            history_df['date'] = pd.to_datetime(history_df['date'])
-            history_df = history_df.sort_values('date', ascending=False)
-            
-            # Apply color coding based on status
-            def color_status(status):
-                return ['background-color: #ff4b4b' if x == 'Error' 
-                        else 'background-color: #00cc00' for x in status]
-            
-            styled_df = history_df.style.apply(lambda x: color_status(x), 
-                                             subset=['status'])
-            st.dataframe(styled_df, use_container_width=True)
-        else:
-            st.info("No processing history available")
-
-        # Scheduled Tasks
-        st.subheader("Scheduled Tasks")
-        scheduler = TaskScheduler()
-        jobs = scheduler.scheduler.get_jobs()
-        
-        if jobs:
-            job_data = []
-            for job in jobs:
-                next_run = job.next_run_time.strftime("%Y-%m-%d %H:%M:%S")
-                job_data.append({
-                    "Next Run": next_run,
-                    "File": getattr(job.args[0], 'name', 'Unknown'),
-                    "Status": "Pending"
-                })
-            st.dataframe(pd.DataFrame(job_data), use_container_width=True)
-        else:
-            st.info("No scheduled tasks")
-
-        # File upload section
-        st.header("Upload New Batch")
-        uploaded_file = st.file_uploader("Upload Excel file", type=['xlsx', 'xls'])
-        
-        if uploaded_file:
-            try:
-                processor = ExcelProcessor(uploaded_file)
-                df = processor.read_excel()
-                
-                st.subheader("Preview of uploaded data")
-                st.dataframe(df.head())
-                
-                if st.button("Process Entries"):
-                    with st.spinner("Processing journal entries..."):
-                        st.session_state.current_batch = [{'processed': False} for _ in range(len(df))]
-                        results = process_entries(df)
-                        st.session_state.processing_results.extend(results)
-                        st.session_state.current_batch = None
-                        display_results(results)
-            
-            except Exception as e:
-                error_logger.log_error(
-                    'processing_errors',
-                    str(e),
-                    {'filename': uploaded_file.name}
-                )
-                st.error(f"Error processing file: {str(e)}")
-        
-        # Scheduling section
-        st.header("Schedule Processing")
-        with st.form("scheduler_form"):
-            schedule_time = st.time_input("Select processing time")
-            schedule_file = st.file_uploader("Upload Excel file for scheduling", type=['xlsx', 'xls'])
-            schedule_submit = st.form_submit_button("Schedule Processing")
-            
-            if schedule_submit and schedule_file:
+            if uploaded_file:
                 try:
-                    scheduler = TaskScheduler()
-                    scheduler.schedule_task(schedule_time, schedule_file)
-                    error_logger.log_info(
-                        f"Processing scheduled for {schedule_time} with file {schedule_file.name}"
-                    )
-                    st.success(f"Processing scheduled for {schedule_time}")
+                    processor = ExcelProcessor(uploaded_file)
+                    df = processor.read_excel()
+                    
+                    st.subheader("Preview of uploaded data")
+                    st.dataframe(df.head())
+                    
+                    if st.button("Process Entries"):
+                        with st.spinner("Processing journal entries..."):
+                            st.session_state.current_batch = [{'processed': False} for _ in range(len(df))]
+                            results = process_entries(df)
+                            st.session_state.processing_results.extend(results)
+                            st.session_state.current_batch = None
+                            display_results(results)
+                
                 except Exception as e:
                     error_logger.log_error(
                         'processing_errors',
                         str(e),
-                        {'schedule_time': str(schedule_time), 'filename': schedule_file.name}
+                        {'filename': uploaded_file.name}
                     )
-                    st.error(f"Error scheduling task: {str(e)}")
+                    st.error(f"Error processing file: {str(e)}")
+            
+            # Scheduling section
+            st.header("Schedule Processing")
+            with st.form("scheduler_form"):
+                schedule_time = st.time_input("Select processing time")
+                schedule_file = st.file_uploader("Upload Excel file for scheduling", type=['xlsx', 'xls'])
+                schedule_submit = st.form_submit_button("Schedule Processing")
+                
+                if schedule_submit and schedule_file:
+                    try:
+                        scheduler = TaskScheduler()
+                        scheduler.schedule_task(schedule_time, schedule_file)
+                        error_logger.log_info(
+                            f"Processing scheduled for {schedule_time} with file {schedule_file.name}"
+                        )
+                        st.success(f"Processing scheduled for {schedule_time}")
+                    except Exception as e:
+                        error_logger.log_error(
+                            'processing_errors',
+                            str(e),
+                            {'schedule_time': str(schedule_time), 'filename': schedule_file.name}
+                        )
+                        st.error(f"Error scheduling task: {str(e)}")
+
+        # Export Tab
+        with tab3:
+            st.header("Export Processing Results")
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                if st.button("Export to Excel"):
+                    if st.session_state.processing_results:
+                        output = export_to_excel(
+                            st.session_state.processing_results,
+                            "processing_results.xlsx"
+                        )
+                        st.download_button(
+                            label="Download Excel File",
+                            data=output,
+                            file_name="processing_results.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
+                        error_logger.log_info("Processing results exported to Excel")
+                    else:
+                        st.warning("No processing results available to export")
+            
+            with col2:
+                if st.button("Export to CSV"):
+                    if st.session_state.processing_results:
+                        output = export_to_csv(
+                            st.session_state.processing_results,
+                            "processing_results.csv"
+                        )
+                        st.download_button(
+                            label="Download CSV File",
+                            data=output,
+                            file_name="processing_results.csv",
+                            mime="text/csv"
+                        )
+                        error_logger.log_info("Processing results exported to CSV")
+                    else:
+                        st.warning("No processing results available to export")
+
+        # Processing Status Tab
+        with tab4:
+            st.header("Batch Processing Status")
+            
+            # Processing Statistics
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                total_entries = sum(1 for result in st.session_state.processing_results 
+                                if result['status'] == 'Success')
+                st.metric("Total Processed", total_entries)
+            with col2:
+                success_rate = (total_entries / len(st.session_state.processing_results) * 100 
+                              if st.session_state.processing_results else 0)
+                st.metric("Success Rate", f"{success_rate:.1f}%")
+            with col3:
+                pending_tasks = len([task for task in TaskScheduler().scheduler.get_jobs()])
+                st.metric("Pending Tasks", pending_tasks)
+
+            # Current Batch Status
+            if st.session_state.current_batch:
+                st.subheader("Current Batch Progress")
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+                
+                total = len(st.session_state.current_batch)
+                completed = sum(1 for entry in st.session_state.current_batch if entry.get('processed'))
+                progress = completed / total if total > 0 else 0
+                
+                progress_bar.progress(progress)
+                status_text.text(f"Processing: {completed}/{total} entries")
+
+            # Recent Processing History
+            st.subheader("Recent Processing History")
+            if st.session_state.processing_results:
+                history_df = pd.DataFrame(st.session_state.processing_results)
+                history_df['date'] = pd.to_datetime(history_df['date'])
+                history_df = history_df.sort_values('date', ascending=False)
+                
+                # Apply color coding based on status
+                def color_status(status):
+                    return ['background-color: #ff4b4b' if x == 'Error' 
+                            else 'background-color: #00cc00' for x in status]
+                
+                styled_df = history_df.style.apply(lambda x: color_status(x), 
+                                                subset=['status'])
+                st.dataframe(styled_df, use_container_width=True)
+            else:
+                st.info("No processing history available")
+
+            # Scheduled Tasks
+            st.subheader("Scheduled Tasks")
+            scheduler = TaskScheduler()
+            jobs = scheduler.scheduler.get_jobs()
+            
+            if jobs:
+                job_data = []
+                for job in jobs:
+                    next_run = job.next_run_time.strftime("%Y-%m-%d %H:%M:%S")
+                    job_data.append({
+                        "Next Run": next_run,
+                        "File": getattr(job.args[0], 'name', 'Unknown'),
+                        "Status": "Pending"
+                    })
+                st.dataframe(pd.DataFrame(job_data), use_container_width=True)
+            else:
+                st.info("No scheduled tasks")
 
 def logout():
     error_logger.log_info("User logged out")
@@ -265,6 +342,8 @@ def logout():
     st.session_state.api_client = None
     st.session_state.processing_results = []
     st.session_state.current_batch = None
+    st.session_state.cost_centers = None
+    st.session_state.document_types = None
 
 def process_entries(df):
     """Process journal entries from DataFrame"""

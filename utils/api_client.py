@@ -98,3 +98,62 @@ class SiigoAPI:
                 }
             )
             raise Exception(f"API error: {str(e)}\nDetails: {error_response}")
+
+    def get_cost_centers(self):
+        """Fetch cost centers from Siigo API"""
+        if not self.token:
+            error_msg = "Not authenticated"
+            error_logger.log_error('api_errors', error_msg)
+            raise Exception(error_msg)
+
+        headers = {
+            "Authorization": f"Bearer {self.token}",
+            "Content-Type": "application/json",
+            "Partner-Id": "EmpreSAAS"
+        }
+
+        try:
+            response = requests.get(
+                f"{self.base_url}/v1/cost-centers",
+                headers=headers
+            )
+            response.raise_for_status()
+            result = response.json()
+            error_logger.log_info("Successfully fetched cost centers")
+            return result
+        except Exception as e:
+            error_logger.log_error(
+                'api_errors',
+                f"Error fetching cost centers: {str(e)}"
+            )
+            raise
+
+    def get_document_types(self):
+        """Fetch document types from Siigo API"""
+        if not self.token:
+            error_msg = "Not authenticated"
+            error_logger.log_error('api_errors', error_msg)
+            raise Exception(error_msg)
+
+        headers = {
+            "Authorization": f"Bearer {self.token}",
+            "Content-Type": "application/json",
+            "Partner-Id": "EmpreSAAS"
+        }
+
+        try:
+            response = requests.get(
+                f"{self.base_url}/v1/document-types",
+                headers=headers,
+                params={"type": "FV"}  # Filter for journal vouchers
+            )
+            response.raise_for_status()
+            result = response.json()
+            error_logger.log_info("Successfully fetched document types")
+            return result
+        except Exception as e:
+            error_logger.log_error(
+                'api_errors',
+                f"Error fetching document types: {str(e)}"
+            )
+            raise
