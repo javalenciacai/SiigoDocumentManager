@@ -173,3 +173,175 @@
   }
 }
 2024-11-02 01:53:08,245 - siigo_journal_processor - INFO - Processing completed: 0 successful, 4 failed
+2024-11-02 02:24:30,571 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 02:24:31,310 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 02:24:31,943 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 02:24:31,945 - siigo_journal_processor - INFO - Successfully fetched catalog data
+2024-11-02 02:24:31,946 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 02:24:32,033 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:24:32,035 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:25:16,659 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 02:25:16,672 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 02:25:16,679 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:25:16,681 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:25:20,501 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 02:25:20,510 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 02:25:21,350 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-02 02:25:21,350 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "error_details": {
+    "Status": 400,
+    "Errors": [
+      {
+        "Code": "invalid_balance",
+        "Message": "There is a difference between debit and credit. Total debit: 119000.0, total credit: 0.",
+        "Params": [
+          "items"
+        ],
+        "Detail": "Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/invalid_balance"
+      }
+    ]
+  },
+  "request_payload": {
+    "document": {
+      "id": 9803
+    },
+    "date": "2021-05-16",
+    "items": [
+      {
+        "account": {
+          "code": "11050501",
+          "movement": "Debit"
+        },
+        "customer": {
+          "identification": "1023005372",
+          "branch_office": 0
+        },
+        "description": "Descripci\u00f3n D\u00e9bito",
+        "cost_center": 154,
+        "value": 119000.0
+      }
+    ],
+    "observations": "Observaciones"
+  }
+}
+2024-11-02 02:25:21,995 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-02 02:25:21,996 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "error_details": {
+    "Status": 400,
+    "Errors": [
+      {
+        "Code": "invalid_balance",
+        "Message": "There is a difference between debit and credit. Total debit: 0, total credit: 119000.0.",
+        "Params": [
+          "items"
+        ],
+        "Detail": "Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/invalid_balance"
+      }
+    ]
+  },
+  "request_payload": {
+    "document": {
+      "id": 9803
+    },
+    "date": "2021-05-17",
+    "items": [
+      {
+        "account": {
+          "code": "11100501",
+          "movement": "Credit"
+        },
+        "customer": {
+          "identification": "1023005372",
+          "branch_office": 0
+        },
+        "description": "Descripci\u00f3n Cr\u00e9dito",
+        "cost_center": 154,
+        "value": 119000.0
+      }
+    ],
+    "observations": "Observaciones"
+  }
+}
+2024-11-02 02:25:22,642 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-02 02:25:22,643 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "error_details": {
+    "Status": 400,
+    "Errors": [
+      {
+        "Code": "invalid_balance",
+        "Message": "There is a difference between debit and credit. Total debit: 119000.0, total credit: 0.",
+        "Params": [
+          "items"
+        ],
+        "Detail": "Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/invalid_balance"
+      }
+    ]
+  },
+  "request_payload": {
+    "document": {
+      "id": 9803
+    },
+    "date": "2021-05-18",
+    "items": [
+      {
+        "account": {
+          "code": "11050501",
+          "movement": "Debit"
+        },
+        "customer": {
+          "identification": "1023005372",
+          "branch_office": 0
+        },
+        "description": "Descripci\u00f3n D\u00e9bito",
+        "cost_center": 154,
+        "value": 119000.0
+      }
+    ],
+    "observations": "Observaciones"
+  }
+}
+2024-11-02 02:25:23,386 - siigo_journal_processor - ERROR - api_errors: API error: 400 Client Error: Bad Request for url: https://api.siigo.com/v1/journals
+2024-11-02 02:25:23,387 - siigo_journal_processor - DEBUG - Error details: {
+  "status_code": 400,
+  "error_details": {
+    "Status": 400,
+    "Errors": [
+      {
+        "Code": "invalid_balance",
+        "Message": "There is a difference between debit and credit. Total debit: 0, total credit: 119000.0.",
+        "Params": [
+          "items"
+        ],
+        "Detail": "Check the API documentation: https://developer.siigo.com/introduction/codigos-de-error/invalid_balance"
+      }
+    ]
+  },
+  "request_payload": {
+    "document": {
+      "id": 9803
+    },
+    "date": "2021-05-19",
+    "items": [
+      {
+        "account": {
+          "code": "11100501",
+          "movement": "Credit"
+        },
+        "customer": {
+          "identification": "1023005372",
+          "branch_office": 0
+        },
+        "description": "Descripci\u00f3n Cr\u00e9dito",
+        "cost_center": 154,
+        "value": 119000.0
+      }
+    ],
+    "observations": "Observaciones"
+  }
+}
+2024-11-02 02:25:23,392 - siigo_journal_processor - INFO - Processing completed: 0 successful, 4 failed
+2024-11-02 02:25:23,397 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:25:23,472 - siigo_journal_processor - INFO - Task scheduler initialized
