@@ -96,6 +96,21 @@ def format_task_details(task):
         "Schedule": schedule
     }
 
+def logout():
+    # Clear authentication state
+    st.session_state.authenticated = False
+    st.session_state.api_client = None
+    st.session_state.cost_centers = None
+    st.session_state.document_types = None
+    # Clear other session state variables
+    st.session_state.processing_results = []
+    st.session_state.current_batch = None
+    st.session_state.selected_task = None
+    # Log the logout
+    error_logger.log_info('User logged out successfully')
+    # Force page refresh
+    st.rerun()
+
 def main():
     st.title("Siigo Journal Entry Processor")
     
@@ -390,7 +405,7 @@ def main():
                 # Apply filters
                 filtered_df = tasks_df[
                     tasks_df['Status'].isin(status_filter) &
-                    tasks_df['Frequency'].isin(frequency_filter)
+                    tasks_df['Frequency'].isin([f.title() for f in frequency_filter])
                 ]
                 
                 if not filtered_df.empty:
@@ -403,36 +418,37 @@ def main():
                             ],
                             subset=['Status']
                         ),
-                        use_container_width=True
+                        use_container_width=True,
+                        height=400
                     )
                     
                     # Task details view
                     st.subheader("Task Details")
-                    selected_task = st.selectbox(
+                    selected_task_idx = st.selectbox(
                         "Select a task to view details",
                         options=filtered_df.index,
                         format_func=lambda x: f"{filtered_df.iloc[x]['File']} - {filtered_df.iloc[x]['Next Run']}"
                     )
                     
-                    if selected_task is not None:
-                        task = filtered_df.iloc[selected_task]
+                    if selected_task_idx is not None:
+                        task = filtered_df.iloc[selected_task_idx]
                         col1, col2 = st.columns(2)
                         
                         with col1:
                             st.markdown("#### Schedule Information")
-                            st.write(f"**Status:** {task['Status']}")
-                            st.write(f"**Next Run:** {task['Next Run']}")
-                            st.write(f"**Frequency:** {task['Frequency']}")
-                            st.write(f"**Schedule:** {task['Schedule']}")
+                            st.markdown(f"**Status:** {task['Status']}")
+                            st.markdown(f"**Next Run:** {task['Next Run']}")
+                            st.markdown(f"**Frequency:** {task['Frequency']}")
+                            st.markdown(f"**Schedule:** {task['Schedule']}")
                         
                         with col2:
                             st.markdown("#### File Information")
-                            st.write(f"**Filename:** {task['File']}")
+                            st.markdown(f"**Filename:** {task['File']}")
                             
                             # Add action buttons
-                            if st.button("Cancel Schedule", key=f"cancel_{selected_task}"):
+                            if st.button("Cancel Schedule", key=f"cancel_{selected_task_idx}"):
                                 try:
-                                    scheduler.scheduler.remove_job(str(selected_task))
+                                    scheduler.scheduler.remove_job(str(selected_task_idx))
                                     st.success("Schedule canceled successfully")
                                     st.rerun()
                                 except Exception as e:
@@ -449,10 +465,10 @@ def main():
                 progress_bar = st.progress(0)
                 status_text = st.empty()
                 
+                # Update progress
+                completed = sum(1 for item in st.session_state.current_batch if item['processed'])
                 total = len(st.session_state.current_batch)
-                completed = sum(1 for entry in st.session_state.current_batch if entry.get('processed'))
-                progress = completed / total if total > 0 else 0
-                
+                progress = completed / total
                 progress_bar.progress(progress)
                 status_text.text(f"Processing: {completed}/{total} entries")
             
@@ -463,13 +479,14 @@ def main():
                 history_df['date'] = pd.to_datetime(history_df['date'])
                 history_df = history_df.sort_values('date', ascending=False)
                 
-                def color_status(status):
-                    return ['background-color: #ff4b4b' if x == 'Error' 
-                            else 'background-color: #00cc00' for x in status]
-                
-                styled_df = history_df.style.apply(lambda x: color_status(x), 
-                                                subset=['status'])
-                st.dataframe(styled_df, use_container_width=True)
+                # Add color coding
+                st.dataframe(
+                    history_df.style.apply(
+                        lambda x: ['background-color: #4caf50' if val == 'Success' else 'background-color: #ff4b4b' for val in x],
+                        subset=['status']
+                    ),
+                    use_container_width=True
+                )
             else:
                 st.info("No processing history available")
 

@@ -382,3 +382,8 @@
 2024-11-02 02:36:58,958 - siigo_journal_processor - INFO - Processing scheduled daily at 00:15:00 with file example3.xlsx
 2024-11-02 02:36:58,962 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 02:36:58,964 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:41:32,152 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 02:41:32,978 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 02:41:33,799 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 02:41:33,800 - siigo_journal_processor - INFO - Successfully fetched catalog data
+2024-11-02 02:41:33,801 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
