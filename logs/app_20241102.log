@@ -600,3 +600,40 @@
 2024-11-02 03:49:35,614 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 03:49:35,857 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 03:51:54,563 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 03:55:04,230 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 03:55:05,247 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 03:55:06,458 - siigo_journal_processor - INFO - Successfully fetched document types
+2024-11-02 03:55:06,460 - siigo_journal_processor - INFO - Successfully fetched catalogs
+2024-11-02 03:55:06,461 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 03:55:06,515 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:55:18,445 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:55:18,454 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: 'No job by the id of 1 was found'
+2024-11-02 03:55:18,455 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: Error cancelling task: 'No job by the id of 1 was found'
+2024-11-02 03:55:18,456 - siigo_journal_processor - DEBUG - Error details: {
+  "task_id": 1
+}
+2024-11-02 03:55:26,963 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:55:26,974 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: 'No job by the id of 2 was found'
+2024-11-02 03:55:26,974 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: Error cancelling task: 'No job by the id of 2 was found'
+2024-11-02 03:55:26,975 - siigo_journal_processor - DEBUG - Error details: {
+  "task_id": 2
+}
+2024-11-02 03:55:28,907 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:55:28,914 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: 'No job by the id of 1 was found'
+2024-11-02 03:55:28,914 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: Error cancelling task: 'No job by the id of 1 was found'
+2024-11-02 03:55:28,915 - siigo_journal_processor - DEBUG - Error details: {
+  "task_id": 1
+}
+2024-11-02 03:55:29,362 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:55:29,371 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: 'No job by the id of 3 was found'
+2024-11-02 03:55:29,372 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: Error cancelling task: 'No job by the id of 3 was found'
+2024-11-02 03:55:29,373 - siigo_journal_processor - DEBUG - Error details: {
+  "task_id": 3
+}
+2024-11-02 03:55:29,959 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 03:55:29,970 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: 'No job by the id of 4 was found'
+2024-11-02 03:55:29,971 - siigo_journal_processor - ERROR - processing_errors: Error cancelling task: Error cancelling task: 'No job by the id of 4 was found'
+2024-11-02 03:55:29,972 - siigo_journal_processor - DEBUG - Error details: {
+  "task_id": 4
+}
+2024-11-02 03:56:54,292 - siigo_journal_processor - INFO - Database initialized successfully

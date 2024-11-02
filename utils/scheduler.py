@@ -4,6 +4,7 @@ import pytz
 from utils.logger import error_logger
 from utils.database import task_db
 import asyncio
+from apscheduler.jobstores.base import JobLookupError
 
 class TaskScheduler:
     def __init__(self):
@@ -70,9 +71,10 @@ class TaskScheduler:
             asyncio.set_event_loop(loop)
             task_id = loop.run_until_complete(self._save_task_to_db(task_data))
             
-            # Add job to scheduler
+            # Add job to scheduler with string task_id
             self.scheduler.add_job(
                 self._process_scheduled_file,
+                job_id=str(task_id),  # Convert task_id to string
                 **trigger_args,
                 args=[file, task_id]
             )
@@ -165,11 +167,21 @@ class TaskScheduler:
     async def cancel_task(self, task_id):
         """Cancel a scheduled task"""
         try:
+            # Get task from database first
+            task = await task_db.get_task(task_id)
+            if not task:
+                raise Exception(f"Task {task_id} not found in database")
+                
             # Remove from scheduler
-            self.scheduler.remove_job(str(task_id))
+            try:
+                self.scheduler.remove_job(str(task_id))
+            except JobLookupError:
+                error_logger.log_info(f"Job {task_id} not found in scheduler, continuing with database cleanup")
+                
             # Update database
             await task_db.delete_task(task_id)
             error_logger.log_info(f"Task {task_id} cancelled successfully")
+            
         except Exception as e:
             error_logger.log_error(
                 'processing_errors',
