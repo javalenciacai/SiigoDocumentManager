@@ -387,3 +387,57 @@
 2024-11-02 02:41:33,799 - siigo_journal_processor - INFO - Successfully fetched document types
 2024-11-02 02:41:33,800 - siigo_journal_processor - INFO - Successfully fetched catalog data
 2024-11-02 02:41:33,801 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
+2024-11-02 02:45:07,706 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 02:45:08,329 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:45:08,371 - siigo_journal_processor - INFO - Successfully fetched cost centers
+2024-11-02 02:45:41,356 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:45:41,358 - siigo_journal_processor - INFO - Task scheduled successfully for 2024-11-02 22:30:00 with frequency daily
+2024-11-02 02:45:41,358 - siigo_journal_processor - INFO - Processing scheduled daily at 22:30:00 with file example3.xlsx
+2024-11-02 02:45:41,362 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 02:47:37,956 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-02 02:47:37,969 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-02 02:47:37,969 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD"
+  ]
+}
+2024-11-02 02:47:37,970 - siigo_journal_processor - ERROR - validation_errors: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-02 02:47:37,970 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-02 02:47:37,971 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Invalid date format in column 'date' at rows: [0]. Required format: YYYY-MM-DD
+2024-11-02 02:47:37,971 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-02 02:47:37,987 - siigo_journal_processor - INFO - Successfully read Excel file with 1 rows
+2024-11-02 02:47:37,988 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-02 02:47:37,988 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations"
+  ]
+}
+2024-11-02 02:47:37,989 - siigo_journal_processor - ERROR - validation_errors: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-02 02:47:37,989 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-02 02:47:37,989 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Missing required columns: document_id, account_code, movement, customer_identification, branch_office, cost_center, value, observations
+2024-11-02 02:47:37,989 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-02 02:47:38,006 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-02 02:47:38,013 - siigo_journal_processor - ERROR - validation_errors: Template validation failed
+2024-11-02 02:47:38,013 - siigo_journal_processor - DEBUG - Error details: {
+  "errors": [
+    "Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)"
+  ]
+}
+2024-11-02 02:47:38,013 - siigo_journal_processor - ERROR - validation_errors: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-02 02:47:38,013 - siigo_journal_processor - DEBUG - Error details: {
+  "template_version": "2.0"
+}
+2024-11-02 02:47:38,013 - siigo_journal_processor - ERROR - validation_errors: Error reading Excel file: Journal entries for document_id 27441 are not balanced (Debit: 119000, Credit: 90000)
+2024-11-02 02:47:38,014 - siigo_journal_processor - DEBUG - Error details: {
+  "filename": "unknown"
+}
+2024-11-02 02:47:38,032 - siigo_journal_processor - INFO - Successfully read Excel file with 2 rows
+2024-11-02 02:47:38,039 - siigo_journal_processor - INFO - Template validation completed successfully

@@ -15,4 +15,5 @@ dependencies = [
     "streamlit>=1.39.0",
     "numpy",
     "jsonschema>=4.23.0",
+    "aiosqlite>=0.20.0",
 ]

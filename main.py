@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
+import asyncio
 from utils.api_client import SiigoAPI
 from utils.excel_processor import ExcelProcessor
 from utils.scheduler import TaskScheduler
@@ -76,40 +77,41 @@ def get_task_status_color(next_run):
     except:
         return "⚪ Unknown"
 
-def format_task_details(task):
-    """Format task details for display"""
-    status = get_task_status_color(task['next_run'])
-    
-    if task['frequency'] == 'weekly':
-        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-        schedule = f"Weekly on {days[task['day_of_week']]}"
-    elif task['frequency'] == 'monthly':
-        schedule = f"Monthly on day {task['day_of_month']}"
-    else:
-        schedule = "Daily"
-        
-    return {
-        "Status": status,
-        "Next Run": task['next_run'],
-        "File": task['file'],
-        "Frequency": task['frequency'].title(),
-        "Schedule": schedule
-    }
-
 def logout():
-    # Clear authentication state
+    """Logout user and clear session state"""
     st.session_state.authenticated = False
     st.session_state.api_client = None
     st.session_state.cost_centers = None
     st.session_state.document_types = None
-    # Clear other session state variables
     st.session_state.processing_results = []
     st.session_state.current_batch = None
     st.session_state.selected_task = None
-    # Log the logout
     error_logger.log_info('User logged out successfully')
-    # Force page refresh
     st.rerun()
+
+def process_entries(df):
+    """Process journal entries from DataFrame"""
+    results = []
+    if st.session_state.authenticated and st.session_state.api_client:
+        processor = ExcelProcessor(None)  # Just for API formatting
+        for doc_id, group in df.groupby('document_id'):
+            try:
+                payload = processor.format_entries_for_api(group)
+                response = st.session_state.api_client.create_journal_entry(payload)
+                results.append({
+                    'document_id': doc_id,
+                    'date': group['date'].iloc[0],
+                    'status': 'Success',
+                    'message': 'Journal entry created successfully'
+                })
+            except Exception as e:
+                results.append({
+                    'document_id': doc_id,
+                    'date': group['date'].iloc[0],
+                    'status': 'Error',
+                    'message': str(e)
+                })
+    return results
 
 def main():
     st.title("Siigo Journal Entry Processor")
@@ -181,49 +183,6 @@ def main():
             "Processing Status"
         ])
 
-        # Catalog Lookup Tab
-        with tab2:
-            st.header("Catalog Lookup")
-            
-            if st.button("Refresh Catalogs"):
-                fetch_catalogs()
-
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.subheader("Cost Centers")
-                if st.session_state.cost_centers:
-                    cost_centers_df = pd.DataFrame(st.session_state.cost_centers)
-                    if not cost_centers_df.empty:
-                        search_cost = st.text_input("Search Cost Centers", key="cost_search")
-                        filtered_cost = cost_centers_df
-                        if search_cost:
-                            filtered_cost = cost_centers_df[
-                                cost_centers_df.apply(lambda x: x.astype(str).str.contains(search_cost, case=False).any(), axis=1)
-                            ]
-                        st.dataframe(filtered_cost, use_container_width=True)
-                    else:
-                        st.info("No cost centers available")
-                else:
-                    st.info("Cost centers not loaded")
-
-            with col2:
-                st.subheader("Document Types")
-                if st.session_state.document_types:
-                    doc_types_df = pd.DataFrame(st.session_state.document_types)
-                    if not doc_types_df.empty:
-                        search_doc = st.text_input("Search Document Types", key="doc_search")
-                        filtered_doc = doc_types_df
-                        if search_doc:
-                            filtered_doc = doc_types_df[
-                                doc_types_df.apply(lambda x: x.astype(str).str.contains(search_doc, case=False).any(), axis=1)
-                            ]
-                        st.dataframe(filtered_doc, use_container_width=True)
-                    else:
-                        st.info("No document types available")
-                else:
-                    st.info("Document types not loaded")
-
         # Journal Entry Processing Tab
         with tab1:
             st.header("Upload New Batch")
@@ -243,7 +202,16 @@ def main():
                             results = process_entries(df)
                             st.session_state.processing_results.extend(results)
                             st.session_state.current_batch = None
-                            display_results(results)
+                            
+                            # Display results
+                            success_count = sum(1 for r in results if r['status'] == 'Success')
+                            error_count = len(results) - success_count
+                            
+                            st.success(f"Processing completed: {success_count} successful, {error_count} failed")
+                            if error_count > 0:
+                                st.error("Some entries failed to process. Check the Export tab for details.")
+                            
+                            st.dataframe(pd.DataFrame(results))
                 
                 except Exception as e:
                     error_logger.log_error(
@@ -319,6 +287,49 @@ def main():
                         )
                         st.error(f"Error scheduling task: {str(e)}")
 
+        # Catalog Lookup Tab
+        with tab2:
+            st.header("Catalog Lookup")
+            
+            if st.button("Refresh Catalogs"):
+                fetch_catalogs()
+
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.subheader("Cost Centers")
+                if st.session_state.cost_centers:
+                    cost_centers_df = pd.DataFrame(st.session_state.cost_centers)
+                    if not cost_centers_df.empty:
+                        search_cost = st.text_input("Search Cost Centers", key="cost_search")
+                        filtered_cost = cost_centers_df
+                        if search_cost:
+                            filtered_cost = cost_centers_df[
+                                cost_centers_df.apply(lambda x: x.astype(str).str.contains(search_cost, case=False).any(), axis=1)
+                            ]
+                        st.dataframe(filtered_cost, use_container_width=True)
+                    else:
+                        st.info("No cost centers available")
+                else:
+                    st.info("Cost centers not loaded")
+
+            with col2:
+                st.subheader("Document Types")
+                if st.session_state.document_types:
+                    doc_types_df = pd.DataFrame(st.session_state.document_types)
+                    if not doc_types_df.empty:
+                        search_doc = st.text_input("Search Document Types", key="doc_search")
+                        filtered_doc = doc_types_df
+                        if search_doc:
+                            filtered_doc = doc_types_df[
+                                doc_types_df.apply(lambda x: x.astype(str).str.contains(search_doc, case=False).any(), axis=1)
+                            ]
+                        st.dataframe(filtered_doc, use_container_width=True)
+                    else:
+                        st.info("No document types available")
+                else:
+                    st.info("Document types not loaded")
+
         # Export Tab
         with tab3:
             st.header("Export Processing Results")
@@ -365,7 +376,11 @@ def main():
             # Overview metrics
             col1, col2, col3 = st.columns(3)
             scheduler = TaskScheduler()
-            tasks = scheduler.get_scheduled_tasks()
+            
+            # Get tasks asynchronously
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            tasks = loop.run_until_complete(scheduler.get_scheduled_tasks())
             
             with col1:
                 total_tasks = len(tasks)
@@ -379,6 +394,14 @@ def main():
                 overdue_tasks = sum(1 for task in tasks if get_task_status_color(task['next_run']).startswith('🔴'))
                 st.metric("Overdue Tasks", overdue_tasks)
             
+            # Date range filter
+            st.subheader("History Filter")
+            col1, col2 = st.columns(2)
+            with col1:
+                start_date = st.date_input("Start Date", value=datetime.now() - timedelta(days=7))
+            with col2:
+                end_date = st.date_input("End Date", value=datetime.now())
+                
             # Task filtering
             st.subheader("Task Management")
             col1, col2 = st.columns(2)
@@ -399,7 +422,29 @@ def main():
             
             # Display tasks
             if tasks:
-                formatted_tasks = [format_task_details(task) for task in tasks]
+                formatted_tasks = []
+                for task in tasks:
+                    task_history = loop.run_until_complete(
+                        scheduler.get_task_history(
+                            task['id'],
+                            start_date.strftime('%Y-%m-%d'),
+                            end_date.strftime('%Y-%m-%d')
+                        )
+                    )
+                    
+                    success_count = sum(1 for h in task_history if h['status'] == 'success')
+                    failed_count = sum(1 for h in task_history if h['status'] == 'failed')
+                    
+                    formatted_task = {
+                        "Status": get_task_status_color(task['next_run']),
+                        "Next Run": task['next_run'],
+                        "File": task['file_name'],
+                        "Frequency": task['frequency'].title(),
+                        "Success Rate": f"{(success_count / len(task_history) * 100):.1f}%" if task_history else "N/A",
+                        "Last Run Status": task_history[0]['status'].title() if task_history else "N/A"
+                    }
+                    formatted_tasks.append(formatted_task)
+                
                 tasks_df = pd.DataFrame(formatted_tasks)
                 
                 # Apply filters
@@ -414,9 +459,13 @@ def main():
                             lambda x: ['background-color: #ff4b4b' if '🔴' in str(val)
                                      else 'background-color: #ffeb3b' if '🟡' in str(val)
                                      else 'background-color: #4caf50' if '🟢' in str(val)
-                                     else '' for val in x
-                            ],
+                                     else '' for val in x],
                             subset=['Status']
+                        ).apply(
+                            lambda x: ['background-color: #ff4b4b' if 'Failed' in str(val)
+                                     else 'background-color: #4caf50' if 'Success' in str(val)
+                                     else '' for val in x],
+                            subset=['Last Run Status']
                         ),
                         use_container_width=True,
                         height=400
@@ -439,7 +488,8 @@ def main():
                             st.markdown(f"**Status:** {task['Status']}")
                             st.markdown(f"**Next Run:** {task['Next Run']}")
                             st.markdown(f"**Frequency:** {task['Frequency']}")
-                            st.markdown(f"**Schedule:** {task['Schedule']}")
+                            st.markdown(f"**Success Rate:** {task['Success Rate']}")
+                            st.markdown(f"**Last Run Status:** {task['Last Run Status']}")
                         
                         with col2:
                             st.markdown("#### File Information")
@@ -448,47 +498,44 @@ def main():
                             # Add action buttons
                             if st.button("Cancel Schedule", key=f"cancel_{selected_task_idx}"):
                                 try:
-                                    scheduler.scheduler.remove_job(str(selected_task_idx))
+                                    loop.run_until_complete(scheduler.cancel_task(selected_task_idx))
                                     st.success("Schedule canceled successfully")
                                     st.rerun()
                                 except Exception as e:
                                     st.error(f"Error canceling schedule: {str(e)}")
+                        
+                        # Show task history
+                        st.subheader("Execution History")
+                        task_history = loop.run_until_complete(
+                            scheduler.get_task_history(
+                                selected_task_idx,
+                                start_date.strftime('%Y-%m-%d'),
+                                end_date.strftime('%Y-%m-%d')
+                            )
+                        )
+                        
+                        if task_history:
+                            history_df = pd.DataFrame([{
+                                'Run Time': h['run_time'],
+                                'Status': h['status'].title(),
+                                'Details': h['result'] if h['result'] else 'No details available'
+                            } for h in task_history])
+                            
+                            st.dataframe(
+                                history_df.style.apply(
+                                    lambda x: ['background-color: #ff4b4b' if val == 'Failed'
+                                             else 'background-color: #4caf50' if val == 'Success'
+                                             else 'background-color: #ffeb3b' for val in x],
+                                    subset=['Status']
+                                ),
+                                use_container_width=True
+                            )
+                        else:
+                            st.info("No execution history available")
                 else:
                     st.info("No tasks match the selected filters")
             else:
                 st.info("No scheduled tasks available")
-            
-            # Batch Processing Status
-            st.header("Current Processing Status")
-            if st.session_state.current_batch:
-                st.subheader("Current Batch Progress")
-                progress_bar = st.progress(0)
-                status_text = st.empty()
-                
-                # Update progress
-                completed = sum(1 for item in st.session_state.current_batch if item['processed'])
-                total = len(st.session_state.current_batch)
-                progress = completed / total
-                progress_bar.progress(progress)
-                status_text.text(f"Processing: {completed}/{total} entries")
-            
-            # Processing History
-            st.subheader("Processing History")
-            if st.session_state.processing_results:
-                history_df = pd.DataFrame(st.session_state.processing_results)
-                history_df['date'] = pd.to_datetime(history_df['date'])
-                history_df = history_df.sort_values('date', ascending=False)
-                
-                # Add color coding
-                st.dataframe(
-                    history_df.style.apply(
-                        lambda x: ['background-color: #4caf50' if val == 'Success' else 'background-color: #ff4b4b' for val in x],
-                        subset=['status']
-                    ),
-                    use_container_width=True
-                )
-            else:
-                st.info("No processing history available")
 
 if __name__ == "__main__":
     main()
