@@ -364,6 +364,23 @@ def main():
                 tasks_df = pd.DataFrame(tasks)
                 st.dataframe(tasks_df, use_container_width=True)
                 
+                # Add Cancel buttons for each task
+                for _, task in tasks_df.iterrows():
+                    task_id = task['id']
+                    if st.button(f"Cancel Task {task_id}", key=f"cancel_{task_id}"):
+                        if st.warning("Are you sure you want to cancel this task?", button="Yes"):
+                            try:
+                                loop.run_until_complete(scheduler.cancel_task(task_id))
+                                st.success("✅ Task cancelled successfully!")
+                                st.rerun()  # Refresh the page
+                            except Exception as e:
+                                st.error(f"❌ Error cancelling task: {str(e)}")
+                                error_logger.log_error(
+                                    'processing_errors',
+                                    f"Error cancelling task: {str(e)}",
+                                    {'task_id': task_id}
+                                )
+                
                 # Task details
                 if st.session_state.selected_task:
                     st.subheader("Task Details")
