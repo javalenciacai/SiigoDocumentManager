@@ -474,3 +474,9 @@
 2024-11-02 03:01:53,893 - siigo_journal_processor - INFO - Successfully created journal entry for date 2021-05-16
 2024-11-02 03:01:53,917 - siigo_journal_processor - INFO - Task scheduler initialized
 2024-11-02 03:10:04,470 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 03:20:49,973 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 03:20:49,978 - siigo_journal_processor - ERROR - authentication_errors: name 'fetch_catalogs' is not defined
+2024-11-02 03:20:49,978 - siigo_journal_processor - DEBUG - Error details: {
+  "username": "siigonubejuan@gmail.com"
+}
+2024-11-02 03:21:57,937 - siigo_journal_processor - INFO - Database initialized successfully
