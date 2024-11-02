@@ -1056,3 +1056,20 @@
   "frequency": {}
 }
 2024-11-02 04:51:24,300 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 04:52:35,027 - siigo_journal_processor - INFO - Successfully authenticated user: siigonubejuan@gmail.com
+2024-11-02 04:52:45,415 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:52:45,425 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:52:50,913 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:52:50,920 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:52:52,579 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:52:52,587 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:52:53,829 - siigo_journal_processor - INFO - Successfully read Excel file with 4 rows
+2024-11-02 04:52:53,837 - siigo_journal_processor - INFO - Template validation completed successfully
+2024-11-02 04:52:53,847 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:52:53,853 - siigo_journal_processor - ERROR - processing_errors: Error scheduling task: table scheduled_tasks has no column named company_name
+2024-11-02 04:52:53,853 - siigo_journal_processor - DEBUG - Error details: {
+  "schedule_time": "11:00:00",
+  "frequency": "daily"
+}
+2024-11-02 04:52:53,853 - siigo_journal_processor - ERROR - processing_errors: Error scheduling task: Error scheduling task: table scheduled_tasks has no column named company_name
+2024-11-02 04:54:13,702 - siigo_journal_processor - INFO - Database initialized successfully
