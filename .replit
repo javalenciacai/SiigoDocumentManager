@@ -36,7 +36,7 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "streamlit run main.py"
-waitForPort = 8501
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Create Test Files"
@@ -70,9 +70,5 @@ args = "python3 -m unittest tests/test_excel_processor.py -v"
 run = ["sh", "-c", "streamlit run main.py"]
 
 [[ports]]
-localPort = 8501
+localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 8501
-externalPort = 3000
