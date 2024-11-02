@@ -13,14 +13,20 @@ class SiigoAPI:
         self.company_name = None
         
     def _extract_company_name(self, token):
-        """Extract company name from JWT token"""
         try:
-            # Use PyJWT to decode the token without verification
-            decoded = jwt.decode(token, options={"verify_signature": False}, algorithms=["HS256"])
-            # First try cloud_tenant_company_key, then company_name, then default to Unknown Company
-            company_name = (decoded.get('cloud_tenant_company_key') or 
-                          decoded.get('company_name') or 
-                          'Unknown Company')
+            # Use jwt.decode instead of trying to access decode directly
+            decoded = jwt.decode(token, algorithms=["HS256"], options={"verify_signature": False})
+            # Get the company name from the decoded token
+            company_name = decoded.get('cloud_tenant_company_key')
+            if not company_name:
+                company_name = decoded.get('company_name')
+            if not company_name:
+                error_logger.log_error(
+                    'authentication_errors',
+                    "Company name not found in token",
+                    {'token_claims': list(decoded.keys())}
+                )
+                return 'Unknown Company'
             error_logger.log_info(f"Successfully extracted company name: {company_name}")
             return company_name
         except Exception as e:
