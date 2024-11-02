@@ -69,6 +69,25 @@ def logout():
     st.session_state.document_types = None
     st.rerun()
 
+def get_next_run_preview(schedule_time, frequency, day_of_week=None, day_of_month=None):
+    """Get preview of next run time based on schedule parameters"""
+    now = datetime.now()
+    schedule_datetime = datetime.combine(now.date(), schedule_time)
+    
+    if schedule_datetime <= now:
+        schedule_datetime += timedelta(days=1)
+    
+    if frequency == "weekly" and day_of_week is not None:
+        days_ahead = day_of_week - schedule_datetime.weekday()
+        if days_ahead <= 0:
+            days_ahead += 7
+        schedule_datetime += timedelta(days=days_ahead)
+    elif frequency == "monthly" and day_of_month is not None:
+        while schedule_datetime.day != day_of_month:
+            schedule_datetime += timedelta(days=1)
+    
+    return schedule_datetime
+
 # Initialize session state
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
@@ -174,35 +193,88 @@ def main():
                     st.subheader("Preview")
                     st.dataframe(df.head(), use_container_width=True)
                     
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        if st.button("Process Entries"):
+                    # Processing and Scheduling sections in tabs
+                    process_tab, schedule_tab = st.tabs(["Process Now", "Schedule Processing"])
+                    
+                    with process_tab:
+                        if st.button("Process Entries", type="primary"):
                             with st.spinner("Processing entries..."):
                                 results = process_entries(df)
                                 st.session_state.processing_results = results
                                 
                                 success_count = sum(1 for r in results if r['status'] == 'Success')
                                 st.success(f"Processed {len(results)} entries ({success_count} successful)")
-                                
-                    with col2:
-                        # Schedule processing
-                        st.subheader("Schedule Processing")
-                        schedule_time = st.time_input("Select time")
-                        frequency = st.selectbox("Frequency", ["daily", "weekly", "monthly"])
+                    
+                    with schedule_tab:
+                        st.markdown("### Schedule Settings")
                         
-                        schedule_params = {}
-                        if frequency == "weekly":
-                            schedule_params['day_of_week'] = st.selectbox("Day of Week", range(7))
-                        elif frequency == "monthly":
-                            schedule_params['day_of_month'] = st.selectbox("Day of Month", range(1, 32))
+                        # Create three columns for better layout
+                        col1, col2, col3 = st.columns(3)
+                        
+                        with col1:
+                            frequency = st.selectbox(
+                                "Frequency",
+                                ["daily", "weekly", "monthly"],
+                                help="How often the processing should occur"
+                            )
                             
-                        if st.button("Schedule"):
-                            scheduler = TaskScheduler()
+                        with col2:
+                            schedule_time = st.time_input(
+                                "Processing Time",
+                                value=datetime.now().replace(hour=9, minute=0).time(),
+                                help="Time of day when processing should occur"
+                            )
+                            
+                        with col3:
+                            if frequency == "weekly":
+                                days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+                                day_index = st.selectbox("Day of Week", range(len(days)), format_func=lambda x: days[x])
+                                schedule_params = {'day_of_week': day_index}
+                            elif frequency == "monthly":
+                                day_of_month = st.selectbox("Day of Month", range(1, 32))
+                                schedule_params = {'day_of_month': day_of_month}
+                            else:
+                                schedule_params = {}
+                        
+                        # Preview next run
+                        next_run = get_next_run_preview(
+                            schedule_time,
+                            frequency,
+                            day_of_week=schedule_params.get('day_of_week'),
+                            day_of_month=schedule_params.get('day_of_month')
+                        )
+                        
+                        st.info(f"Next scheduled run will be at: {next_run.strftime('%Y-%m-%d %H:%M')}")
+                        
+                        # Schedule button with confirmation
+                        if st.button("Schedule Processing", type="primary"):
                             try:
+                                scheduler = TaskScheduler()
                                 scheduler.schedule_task(schedule_time, uploaded_file, frequency, **schedule_params)
-                                st.success("Task scheduled successfully!")
+                                st.success("✅ Task scheduled successfully!")
+                                
+                                # Show schedule details
+                                st.markdown("### Schedule Details")
+                                details = {
+                                    "File": uploaded_file.name,
+                                    "Frequency": frequency.capitalize(),
+                                    "Time": schedule_time.strftime("%H:%M"),
+                                    "Next Run": next_run.strftime("%Y-%m-%d %H:%M")
+                                }
+                                if frequency == "weekly":
+                                    details["Day"] = days[schedule_params['day_of_week']]
+                                elif frequency == "monthly":
+                                    details["Day"] = f"{schedule_params['day_of_month']}th"
+                                    
+                                for key, value in details.items():
+                                    st.text(f"{key}: {value}")
+                                    
                             except Exception as e:
-                                st.error(f"Error scheduling task: {str(e)}")
+                                st.error(f"❌ Error scheduling task: {str(e)}")
+                                error_logger.log_error(
+                                    'processing_errors',
+                                    f"Error scheduling task: {str(e)}"
+                                )
                                 
                 except Exception as e:
                     st.error(f"Error processing file: {str(e)}")
