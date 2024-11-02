@@ -988,3 +988,10 @@
 2024-11-02 04:34:06,700 - siigo_journal_processor - INFO - Successfully fetched catalogs
 2024-11-02 04:34:06,701 - siigo_journal_processor - INFO - User siigonubejuan@gmail.com authenticated successfully
 2024-11-02 04:34:06,751 - siigo_journal_processor - INFO - Task scheduler initialized
+2024-11-02 04:40:39,434 - siigo_journal_processor - INFO - Database initialized successfully
+2024-11-02 04:40:41,223 - siigo_journal_processor - ERROR - authentication_errors: Invalid URL 'None/auth': No scheme supplied. Perhaps you meant https://None/auth?
+2024-11-02 04:40:41,223 - siigo_journal_processor - DEBUG - Error details: {
+  "username": "siigonubejuan@gmail.com",
+  "status_code": null,
+  "error_details": null
+}
