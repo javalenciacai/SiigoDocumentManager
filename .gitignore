@@ -1,2 +1,3 @@
 logs/
-app_*.log
+*.log
+scheduled_tasks.db
