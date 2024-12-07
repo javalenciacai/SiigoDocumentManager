@@ -32,15 +32,20 @@ class TaskScheduler:
     def schedule_task(self, time, file, company_name, user_timezone, frequency='daily', day_of_week=None, day_of_month=None):
         """Schedule a task for recurring execution"""
         try:
-            # Convert time to datetime in user's timezone
-            now = datetime.now(pytz.timezone(user_timezone))
+            # Get current time in user's timezone
+            user_tz = pytz.timezone(user_timezone)
+            now = datetime.now(user_tz)
+            
+            # Create schedule time in user's timezone
             schedule_time = datetime.combine(now.date(), time)
+            schedule_time = user_tz.localize(schedule_time)
             
-            # Convert schedule_time to server timezone (UTC)
-            schedule_time = timezone_handler.convert_to_server_time(schedule_time, user_timezone)
+            # Convert to UTC for storage
+            utc = pytz.UTC
+            schedule_time = schedule_time.astimezone(utc)
             
-            # If the time has passed for today, schedule for next occurrence
-            if schedule_time <= now:
+            # If the time has passed for today, add one day
+            if schedule_time <= datetime.now(utc):
                 schedule_time += timedelta(days=1)
             
             trigger_args = {}
