@@ -6,6 +6,37 @@ from utils.database import task_db
 import asyncio
 from apscheduler.jobstores.base import JobLookupError
 
+# Define default timezone for the server
+SERVER_TIMEZONE = 'UTC'
+
+def convert_to_server_time(dt, user_timezone):
+    """Convert datetime from user timezone to server timezone (UTC)"""
+    if not isinstance(dt, datetime):
+        raise ValueError("Input must be a datetime object")
+    
+    user_tz = pytz.timezone(user_timezone)
+    server_tz = pytz.timezone(SERVER_TIMEZONE)
+    
+    # Localize the datetime to user timezone first
+    local_dt = user_tz.localize(dt)
+    # Convert to server timezone
+    return local_dt.astimezone(server_tz)
+
+def convert_to_user_time(dt, user_timezone):
+    """Convert datetime from server timezone (UTC) to user timezone"""
+    if not isinstance(dt, datetime):
+        raise ValueError("Input must be a datetime object")
+    
+    user_tz = pytz.timezone(user_timezone)
+    server_tz = pytz.timezone(SERVER_TIMEZONE)
+    
+    # Ensure datetime is aware of its timezone
+    if dt.tzinfo is None:
+        dt = server_tz.localize(dt)
+    
+    # Convert to user timezone
+    return dt.astimezone(user_tz)
+
 class TaskScheduler:
     def __init__(self):
         self.scheduler = BackgroundScheduler()
@@ -24,12 +55,15 @@ class TaskScheduler:
         """Add task execution history"""
         await task_db.add_task_history(task_id, company_name, status, result)
     
-    def schedule_task(self, time, file, company_name, frequency='daily', day_of_week=None, day_of_month=None):
+    def schedule_task(self, time, file, company_name, user_timezone, frequency='daily', day_of_week=None, day_of_month=None):
         """Schedule a task for recurring execution"""
         try:
-            # Convert time to datetime
-            now = datetime.now()
+            # Convert time to datetime in user's timezone
+            now = datetime.now(pytz.timezone(user_timezone))
             schedule_time = datetime.combine(now.date(), time)
+            
+            # Convert schedule_time to server timezone (UTC)
+            schedule_time = convert_to_server_time(schedule_time, user_timezone)
             
             # If the time has passed for today, schedule for next occurrence
             if schedule_time <= now:

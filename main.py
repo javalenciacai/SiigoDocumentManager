@@ -66,11 +66,15 @@ def schedule_processing(file, time, frequency='daily', params=None):
     if not file:
         raise Exception("File required")
         
+    # Get user timezone from session state
+    user_timezone = st.session_state.get('timezone', 'UTC')
+        
     # Schedule the task
     schedule_info = st.session_state.scheduler.schedule_task(
         time=time,
         file=file,
         company_name=st.session_state.api_client.company_name,
+        user_timezone=user_timezone,
         frequency=frequency,
         day_of_week=params.get('day_of_week') if params else None,
         day_of_month=params.get('day_of_month') if params else None
@@ -101,6 +105,26 @@ def main():
         page_icon="📊",
         layout="wide"
     )
+    
+    # Detect user's timezone using JavaScript
+    st.components.v1.html(
+        """
+        <script>
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            window.parent.postMessage({type: 'timezone', timezone: userTimeZone}, '*');
+        </script>
+        """,
+        height=0
+    )
+    
+    # Handle the timezone message from JavaScript
+    if 'timezone' not in st.session_state:
+        st.session_state.timezone = 'UTC'  # Default timezone
+        
+    # Listen for timezone updates from JavaScript
+    for message in st.components.v1.get_messages():
+        if message.get('type') == 'timezone':
+            st.session_state.timezone = message.get('timezone')
     
     # Authentication check and login form
     if not st.session_state.authenticated:
@@ -239,8 +263,14 @@ def main():
         tasks = asyncio.run(load_scheduled_tasks())
         
         if tasks:
+            user_timezone = st.session_state.get('timezone', 'UTC')
             for task in tasks:
-                with st.expander(f"📄 {task['file_name']} - Next run: {task['next_run']}"):
+                # Convert next_run time to user's timezone
+                next_run = datetime.strptime(task['next_run'], '%Y-%m-%d %H:%M:%S')
+                next_run_user_tz = TaskScheduler.convert_to_user_time(next_run, user_timezone)
+                next_run_str = next_run_user_tz.strftime('%Y-%m-%d %H:%M:%S %Z')
+                
+                with st.expander(f"📄 {task['file_name']} - Next run: {next_run_str}"):
                     st.write(f"Frequency: {task['frequency'].title()}")
                     if task['frequency'] == 'weekly':
                         st.write(f"Day: {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][task['day_of_week']]}")
