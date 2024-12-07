@@ -6,36 +6,10 @@ from utils.database import task_db
 import asyncio
 from apscheduler.jobstores.base import JobLookupError
 
-# Define default timezone for the server
-SERVER_TIMEZONE = 'UTC'
+from utils.timezone_handler import TimezoneHandler
 
-def convert_to_server_time(dt, user_timezone):
-    """Convert datetime from user timezone to server timezone (UTC)"""
-    if not isinstance(dt, datetime):
-        raise ValueError("Input must be a datetime object")
-    
-    user_tz = pytz.timezone(user_timezone)
-    server_tz = pytz.timezone(SERVER_TIMEZONE)
-    
-    # Localize the datetime to user timezone first
-    local_dt = user_tz.localize(dt)
-    # Convert to server timezone
-    return local_dt.astimezone(server_tz)
-
-def convert_to_user_time(dt, user_timezone):
-    """Convert datetime from server timezone (UTC) to user timezone"""
-    if not isinstance(dt, datetime):
-        raise ValueError("Input must be a datetime object")
-    
-    user_tz = pytz.timezone(user_timezone)
-    server_tz = pytz.timezone(SERVER_TIMEZONE)
-    
-    # Ensure datetime is aware of its timezone
-    if dt.tzinfo is None:
-        dt = server_tz.localize(dt)
-    
-    # Convert to user timezone
-    return dt.astimezone(user_tz)
+# Initialize timezone handler
+timezone_handler = TimezoneHandler()
 
 class TaskScheduler:
     def __init__(self):
@@ -63,7 +37,7 @@ class TaskScheduler:
             schedule_time = datetime.combine(now.date(), time)
             
             # Convert schedule_time to server timezone (UTC)
-            schedule_time = convert_to_server_time(schedule_time, user_timezone)
+            schedule_time = timezone_handler.convert_to_server_time(schedule_time, user_timezone)
             
             # If the time has passed for today, schedule for next occurrence
             if schedule_time <= now:

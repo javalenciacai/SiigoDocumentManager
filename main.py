@@ -106,25 +106,27 @@ def main():
         layout="wide"
     )
     
+    # Initialize timezone handler if not in session state
+    if 'timezone_handler' not in st.session_state:
+        from utils.timezone_handler import TimezoneHandler
+        st.session_state.timezone_handler = TimezoneHandler()
+    
     # Detect user's timezone using JavaScript
     st.components.v1.html(
-        """
-        <script>
-            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            window.parent.postMessage({type: 'timezone', timezone: userTimeZone}, '*');
-        </script>
-        """,
+        st.session_state.timezone_handler.get_user_timezone_script(),
         height=0
     )
     
-    # Handle the timezone message from JavaScript
+    # Initialize default timezone if not set
     if 'timezone' not in st.session_state:
-        st.session_state.timezone = 'UTC'  # Default timezone
-        
-    # Listen for timezone updates from JavaScript
-    for message in st.components.v1.get_messages():
-        if message.get('type') == 'timezone':
-            st.session_state.timezone = message.get('timezone')
+        st.session_state.timezone = 'UTC'
+    
+    # Handle timezone messages from JavaScript using Streamlit's native event handling
+    if st.session_state.get('_timezone_initialized', False) is False:
+        st.session_state._timezone_initialized = True
+        st.experimental_set_query_params(
+            callback=st.experimental_get_query_params().get('callback', [None])[0]
+        )
     
     # Authentication check and login form
     if not st.session_state.authenticated:
