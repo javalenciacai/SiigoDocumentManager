@@ -269,7 +269,7 @@ def main():
             for task in tasks:
                 # Convert next_run time to user's timezone
                 next_run = datetime.strptime(task['next_run'], '%Y-%m-%d %H:%M:%S')
-                next_run_user_tz = TaskScheduler.convert_to_user_time(next_run, user_timezone)
+                next_run_user_tz = st.session_state.timezone_handler.convert_to_user_time(next_run, user_timezone)
                 next_run_str = next_run_user_tz.strftime('%Y-%m-%d %H:%M:%S %Z')
                 
                 with st.expander(f"📄 {task['file_name']} - Next run: {next_run_str}"):
