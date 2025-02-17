@@ -124,9 +124,7 @@ def main():
     # Handle timezone messages from JavaScript using Streamlit's native event handling
     if st.session_state.get('_timezone_initialized', False) is False:
         st.session_state._timezone_initialized = True
-        st.experimental_set_query_params(
-            callback=st.experimental_get_query_params().get('callback', [None])[0]
-        )
+        st.query_params['callback'] = st.query_params.get('callback', [None])[0]
     
     # Authentication check and login form
     if not st.session_state.authenticated:
