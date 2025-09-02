@@ -150,6 +150,36 @@ def main():
     # Main interface
     st.title(f"📊 Siigo Journal Entry Processor")
     st.caption(f"Connected as: {st.session_state.api_client.company_name}")
+
+    # Sidebar for template downloads
+    with st.sidebar:
+        st.header("Templates")
+        with st.expander("Download Excel Templates"):
+            st.write("Download the required Excel templates for processing journal entries.")
+            
+            # Simple Template Download
+            try:
+                with open("templates/plantilla_simple.xlsx", "rb") as file:
+                    st.download_button(
+                        label="Download Simple Template",
+                        data=file,
+                        file_name="plantilla_simple.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+            except FileNotFoundError:
+                st.error("Simple template file not found.")
+
+            # Complete Template Download
+            try:
+                with open("templates/plantilla_completa.xlsx", "rb") as file:
+                    st.download_button(
+                        label="Download Full Template",
+                        data=file,
+                        file_name="plantilla_completa.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+            except FileNotFoundError:
+                st.error("Full template file not found.")
     
     # Tabs
     tab1, tab2, tab3, tab4, tab5 = st.tabs([

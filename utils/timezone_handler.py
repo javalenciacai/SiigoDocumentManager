@@ -24,7 +24,11 @@ class TimezoneHandler:
         if not isinstance(dt, datetime):
             raise ValueError("Input must be a datetime object")
         
-        user_tz = pytz.timezone(user_timezone)
+        try:
+            user_tz = pytz.timezone(user_timezone)
+        except pytz.UnknownTimeZoneError:
+            raise ValueError(f"Unknown timezone: {user_timezone}")
+            
         server_tz = pytz.timezone(self.server_timezone)
         
         # Localize the datetime to user timezone first

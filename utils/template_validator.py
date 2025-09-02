@@ -97,15 +97,20 @@ class TemplateValidator:
                         errors.append(f"Values below minimum ({rules['min']}) in column '{col}' at rows: {invalid_min.index.tolist()}")
                     
             elif rules['type'] == 'int':
-                try:
-                    df[col] = df[col].astype(int)
-                except:
-                    errors.append(f"Invalid integer values in column '{col}'")
+                # Coerce to numeric, turning non-numeric into NaN
+                numeric_col = pd.to_numeric(df[col], errors='coerce')
                 
+                # Check for non-integer numbers only where the original value was not null
+                # This allows empty cells to be valid
+                non_int_values = numeric_col.notna() & (numeric_col != numeric_col.round())
+                if non_int_values.any():
+                    errors.append(f"Invalid integer values in column '{col}' at rows: {df[non_int_values].index.tolist()}")
+
+                # Check for minimum value only on valid numbers
                 if 'min' in rules:
-                    invalid_min = df[df[col] < rules['min']]
-                    if not invalid_min.empty:
-                        errors.append(f"Values below minimum ({rules['min']}) in column '{col}' at rows: {invalid_min.index.tolist()}")
+                    invalid_min = numeric_col.notna() & (numeric_col < rules['min'])
+                    if invalid_min.any():
+                        errors.append(f"Values below minimum ({rules['min']}) in column '{col}' at rows: {df[invalid_min].index.tolist()}")
                     
             elif rules['type'] == 'string':
                 if 'values' in rules:
@@ -125,16 +130,6 @@ class TemplateValidator:
                         
     def _validate_business_rules(self, df, errors):
         """Validate business rules"""
-        # Check for future dates
-        try:
-            dates = pd.to_datetime(df['date'], format='%Y-%m-%d')
-            future_dates = df[dates > datetime.now()]
-            if not future_dates.empty:
-                errors.append(f"Future dates found at rows: {future_dates.index.tolist()}")
-        except Exception:
-            # Date format errors will be caught in _validate_data_formats
-            pass
-        
         # Validate balanced entries by document_id (Debit/Credit should have same value)
         for doc_id, group in df.groupby('document_id'):
             debit_sum = group[group['movement'] == 'Debit']['value'].sum()

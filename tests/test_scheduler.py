@@ -27,7 +27,7 @@ class TestTaskScheduler(unittest.TestCase):
         test_file = MagicMock()
         
         with patch.object(self.scheduler.scheduler, 'add_job') as mock_add_job:
-            schedule_info = self.scheduler.schedule_task(schedule_time, test_file)
+            schedule_info = self.scheduler.schedule_task(schedule_time, test_file, "Test Company", "UTC")
             self.assertTrue(mock_add_job.called)
             self.assertEqual(schedule_info['frequency'], 'daily')
             
@@ -43,6 +43,8 @@ class TestTaskScheduler(unittest.TestCase):
             schedule_info = self.scheduler.schedule_task(
                 schedule_time,
                 test_file,
+                "Test Company",
+                "UTC",
                 frequency='weekly',
                 day_of_week=1  # Tuesday
             )
@@ -59,9 +61,11 @@ class TestTaskScheduler(unittest.TestCase):
         test_file = MagicMock()
         
         with patch.object(self.scheduler.scheduler, 'add_job') as mock_add_job:
-            schedule_info = self.scheduler.schedule_task(
+            schedule_info = self.scheduler.schedule_-task(
                 schedule_time,
                 test_file,
+                "Test Company",
+                "UTC",
                 frequency='monthly',
                 day_of_month=15
             )
@@ -74,9 +78,9 @@ class TestTaskScheduler(unittest.TestCase):
         test_file.name = "test.xlsx"
         
         # Add different types of schedules
-        self.scheduler.schedule_task(time(10, 0), test_file)  # daily
-        self.scheduler.schedule_task(time(11, 0), test_file, frequency='weekly', day_of_week=1)
-        self.scheduler.schedule_task(time(12, 0), test_file, frequency='monthly', day_of_month=15)
+        self.scheduler.schedule_task(time(10, 0), test_file, "Test Company", "UTC")  # daily
+        self.scheduler.schedule_task(time(11, 0), test_file, "Test Company", "UTC", frequency='weekly', day_of_week=1)
+        self.scheduler.schedule_task(time(12, 0), test_file, "Test Company", "UTC", frequency='monthly', day_of_month=15)
         
         tasks = self.scheduler.get_scheduled_tasks()
         self.assertEqual(len(tasks), 3)

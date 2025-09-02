@@ -18,6 +18,7 @@ class TestTaskDatabase(unittest.TestCase):
     def test_add_task(self):
         """Test adding a new task"""
         task_data = {
+            'company_name': 'Test Company',
             'file': 'test.xlsx',
             'frequency': 'daily',
             'next_run': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -37,6 +38,7 @@ class TestTaskDatabase(unittest.TestCase):
         """Test updating task status"""
         # Add a task first
         task_data = {
+            'company_name': 'Test Company',
             'file': 'test.xlsx',
             'frequency': 'daily',
             'next_run': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -57,6 +59,7 @@ class TestTaskDatabase(unittest.TestCase):
         """Test task history tracking"""
         # Add a task
         task_data = {
+            'company_name': 'Test Company',
             'file': 'test.xlsx',
             'frequency': 'daily',
             'next_run': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -78,6 +81,7 @@ class TestTaskDatabase(unittest.TestCase):
         """Test deleting a task"""
         # Add a task
         task_data = {
+            'company_name': 'Test Company',
             'file': 'test.xlsx',
             'frequency': 'daily',
             'next_run': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
