@@ -66,11 +66,15 @@ def schedule_processing(file, time, frequency='daily', params=None):
     if not file:
         raise Exception("File required")
         
+    # Get user timezone from session state
+    user_timezone = st.session_state.get('timezone', 'UTC')
+        
     # Schedule the task
     schedule_info = st.session_state.scheduler.schedule_task(
         time=time,
         file=file,
         company_name=st.session_state.api_client.company_name,
+        user_timezone=user_timezone,
         frequency=frequency,
         day_of_week=params.get('day_of_week') if params else None,
         day_of_month=params.get('day_of_month') if params else None
@@ -102,6 +106,26 @@ def main():
         layout="wide"
     )
     
+    # Initialize timezone handler if not in session state
+    if 'timezone_handler' not in st.session_state:
+        from utils.timezone_handler import TimezoneHandler
+        st.session_state.timezone_handler = TimezoneHandler()
+    
+    # Detect user's timezone using JavaScript
+    st.components.v1.html(
+        st.session_state.timezone_handler.get_user_timezone_script(),
+        height=0
+    )
+    
+    # Initialize default timezone if not set
+    if 'timezone' not in st.session_state:
+        st.session_state.timezone = 'UTC'
+    
+    # Handle timezone messages from JavaScript using Streamlit's native event handling
+    if st.session_state.get('_timezone_initialized', False) is False:
+        st.session_state._timezone_initialized = True
+        st.query_params.callback = st.query_params.get('callback', None)
+    
     # Authentication check and login form
     if not st.session_state.authenticated:
         st.title("🔐 Login to Siigo API")
@@ -126,6 +150,36 @@ def main():
     # Main interface
     st.title(f"📊 Siigo Journal Entry Processor")
     st.caption(f"Connected as: {st.session_state.api_client.company_name}")
+
+    # Sidebar for template downloads
+    with st.sidebar:
+        st.header("Templates")
+        with st.expander("Download Excel Templates"):
+            st.write("Download the required Excel templates for processing journal entries.")
+            
+            # Simple Template Download
+            try:
+                with open("templates/plantilla_simple.xlsx", "rb") as file:
+                    st.download_button(
+                        label="Download Simple Template",
+                        data=file,
+                        file_name="plantilla_simple.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+            except FileNotFoundError:
+                st.error("Simple template file not found.")
+
+            # Complete Template Download
+            try:
+                with open("templates/plantilla_completa.xlsx", "rb") as file:
+                    st.download_button(
+                        label="Download Full Template",
+                        data=file,
+                        file_name="plantilla_completa.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+            except FileNotFoundError:
+                st.error("Full template file not found.")
     
     # Tabs
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
@@ -239,8 +293,14 @@ def main():
         tasks = asyncio.run(load_scheduled_tasks())
         
         if tasks:
+            user_timezone = st.session_state.get('timezone', 'UTC')
             for task in tasks:
-                with st.expander(f"📄 {task['file_name']} - Next run: {task['next_run']}"):
+                # Convert next_run time to user's timezone
+                next_run = datetime.strptime(task['next_run'], '%Y-%m-%d %H:%M:%S')
+                next_run_user_tz = st.session_state.timezone_handler.convert_to_user_time(next_run, user_timezone)
+                next_run_str = next_run_user_tz.strftime('%Y-%m-%d %H:%M:%S %Z')
+                
+                with st.expander(f"📄 {task['file_name']} - Next run: {next_run_str}"):
                     st.write(f"Frequency: {task['frequency'].title()}")
                     if task['frequency'] == 'weekly':
                         st.write(f"Day: {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][task['day_of_week']]}")

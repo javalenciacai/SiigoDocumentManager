@@ -50,13 +50,18 @@ Content-Type: application/json
 Partner-Id: EmpreSAAS
 ```
 
-#### Request Schema
+#### Request Schema (Full)
 ```json
 {
     "document": {
         "id": "integer"
     },
     "date": "string (YYYY-MM-DD)",
+    "number": "integer (optional)",
+    "currency": {
+        "code": "string (e.g., COP)",
+        "exchange_rate": "number"
+    },
     "items": [
         {
             "account": {
@@ -67,9 +72,30 @@ Partner-Id: EmpreSAAS
                 "identification": "string",
                 "branch_office": "integer"
             },
-            "description": "string (max 255 chars)",
             "cost_center": "integer",
-            "value": "number"
+            "value": "number",
+            "description": "string (max 255 chars)",
+            "due": {
+                "prefix": "string",
+                "consecutive": "integer",
+                "quote": "integer",
+                "date": "string (YYYY-MM-DD)"
+            },
+            "tax": {
+                "id": "integer",
+                "name": "string",
+                "type": "string",
+                "percentage": "number"
+            },
+            "taxes": {
+                "base_value": "number"
+            },
+            "fixed_assets": "integer",
+            "product": {
+                "code": "string",
+                "quantity": "number",
+                "warehouse": "integer"
+            }
         }
     ],
     "observations": "string (max 500 chars)"
@@ -109,7 +135,7 @@ GET /v1/document-types
 
 #### Query Parameters
 ```
-type=FV (Filter for journal vouchers)
+type=CC (Filter for journal vouchers)
 ```
 
 #### Headers

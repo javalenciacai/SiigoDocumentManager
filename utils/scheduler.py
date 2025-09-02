@@ -6,6 +6,11 @@ from utils.database import task_db
 import asyncio
 from apscheduler.jobstores.base import JobLookupError
 
+from utils.timezone_handler import TimezoneHandler
+
+# Initialize timezone handler
+timezone_handler = TimezoneHandler()
+
 class TaskScheduler:
     def __init__(self):
         self.scheduler = BackgroundScheduler()
@@ -24,15 +29,23 @@ class TaskScheduler:
         """Add task execution history"""
         await task_db.add_task_history(task_id, company_name, status, result)
     
-    def schedule_task(self, time, file, company_name, frequency='daily', day_of_week=None, day_of_month=None):
+    def schedule_task(self, time, file, company_name, user_timezone, frequency='daily', day_of_week=None, day_of_month=None):
         """Schedule a task for recurring execution"""
         try:
-            # Convert time to datetime
-            now = datetime.now()
-            schedule_time = datetime.combine(now.date(), time)
+            # Get current time in user's timezone
+            user_tz = pytz.timezone(user_timezone)
+            now = datetime.now(user_tz)
             
-            # If the time has passed for today, schedule for next occurrence
-            if schedule_time <= now:
+            # Create schedule time in user's timezone
+            schedule_time = datetime.combine(now.date(), time)
+            schedule_time = user_tz.localize(schedule_time)
+            
+            # Convert to UTC for storage
+            utc = pytz.UTC
+            schedule_time = schedule_time.astimezone(utc)
+            
+            # If the time has passed for today, add one day
+            if schedule_time <= datetime.now(utc):
                 schedule_time += timedelta(days=1)
             
             trigger_args = {}

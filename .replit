@@ -1,4 +1,4 @@
-modules = ["python-3.11"]
+modules = ["nodejs-20", "python-3.11"]
 
 [nix]
 channel = "stable-24_05"
@@ -64,11 +64,17 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 -m unittest tests/test_excel_processor.py -v"
+args = "python -m unittest tests/test_timezone_handler.py tests/test_task_scheduler.py -v"
 
 [deployment]
 run = ["sh", "-c", "streamlit run main.py"]
+deploymentTarget = "cloudrun"
 
 [[ports]]
 localPort = 8501
 externalPort = 80
+
+[[ports]]
+localPort = 45333
+externalPort = 3000
+exposeLocalhost = true
